@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #5 $$Date: 2004/02/11 $$Author: wsnyder $
+#$Revision: #7 $$Date: 2004/02/12 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -26,15 +26,16 @@ use Carp;
 
 use strict;
 
-our $VERSION = '1.011';
+our $VERSION = '1.012';
 
 #######################################################################
 
-our $Cache_Dir = $ENV{OBJCACHE_RUNTIME_DIR} || "/usr/local/common/lib/runtime";
+our $Cache_Dir = undef;   # Set/accessed with cache_dir function
 
 #######################################################################
 
 sub cache_dir {
+    $Cache_Dir ||= $ENV{OBJCACHE_RUNTIME_DIR} || "/usr/local/common/lib/runtime";
     $Cache_Dir = shift if $_[0];
     return $Cache_Dir;
 }
@@ -51,7 +52,7 @@ sub format_time {
 }
 
 sub write {
-    my %params = (dir => $Cache_Dir,	# Directory to put results into
+    my %params = (dir => cache_dir(),	# Directory to put results into
 		  #key => ,		# Key to be stored
 		  #persist => {},	# Reference to hash to be stored
 		  @_);
@@ -72,7 +73,7 @@ sub write {
 }
 
 sub read {
-    my %params = (dir => $Cache_Dir,	# Directory to put results into
+    my %params = (dir => cache_dir(),	# Directory to put results into
 		  #key => ,		# Key to be stored
 		  @_);
     # Returns reference to persistent structure, undef if no data known
@@ -86,7 +87,7 @@ sub read {
 }
 
 sub dump {
-    my %params = (dir => $Cache_Dir,	# Directory to put results into
+    my %params = (dir => cache_dir(),	# Directory to put results into
 		  @_);
 
     my $path = $params{dir};

@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #2 $$Date: 2004/02/11 $$Author: wsnyder $
+#$Revision: #3 $$Date: 2004/02/12 $$Author: wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
@@ -27,7 +27,7 @@ chdir "test_dir";
 
 ######################################################################
 
-our $Cache = Cwd::getcwd()."/cache";
+$ENV{OBJCACHE_DIR} = Cwd::getcwd()."/cache";
 $ENV{OBJCACHE_RUNTIME_DIR} = Cwd::getcwd()."/runtime";
 
 for (my $i=0; $i<2; $i++) {
@@ -35,7 +35,7 @@ for (my $i=0; $i<2; $i++) {
     unlink(glob("../test_dir/*"));
     gen_file("test1.cpp", $i);
 
-    my $mc = Make::Cache::Gcc->new (dir=>$Cache,);
+    my $mc = Make::Cache::Gcc->new (dir=>$ENV{OBJCACHE_DIR},);
     ok(1);
 
     $mc->cmds_lcl("g++","-DIGNORED", "test1.cpp","-c","-o","test1.o");
@@ -61,7 +61,7 @@ for (my $i=0; $i<2; $i++) {
 
 {
     print "=========Dump\n";
-    my $mc = Make::Cache::Gcc->new (dir=>$Cache,);
+    my $mc = Make::Cache::Gcc->new (dir=>$ENV{OBJCACHE_DIR},);
     $mc->dump;
 }
 
@@ -74,7 +74,7 @@ for (my $i=0; $i<2; $i++) {
     system("g++","-DDIFFIGNORED", "test1.cpp","-c","-o","test1.exp");
     ok(-r "test1.exp");
 
-    my $mc = Make::Cache::Gcc->new (dir=>$Cache,);
+    my $mc = Make::Cache::Gcc->new (dir=>$ENV{OBJCACHE_DIR},);
     $mc->cmds_lcl("g++","-DDIFFIGNORED", "test1.cpp","-c","-o","test1.o");
     $mc->parse_cmds;
 

@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #6 $$Date: 2004/02/11 $$Author: wsnyder $
+#$Revision: #8 $$Date: 2004/02/12 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -33,7 +33,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.011';
+our $VERSION = '1.012';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;
@@ -205,7 +205,10 @@ sub execute {
     my @params = $self->compile_cmds;
 
     if ($host) {
-	unshift @params, ('rsh', $host, 'cd', Cwd::getcwd(), '&&', 'nice', '-9',);
+	# -n gets around blocking waiting for stdin when 'make' is in the background
+	# FIX: Note this will break if we ever objcache some make target that requires stdin!
+	unshift @params, ($ENV{OBJCACHE_RSH}||'rsh',
+			  '-n', $host, 'cd', Cwd::getcwd(), '&&', 'nice', '-9',);
     }
 
     my $runtime = $self->run(@params);
@@ -261,8 +264,7 @@ sub run_stdout {
     # Redirect stdout to file
     open (SAVEOUT, ">&STDOUT") or croak "%Error: Can't dup stdout,";
     if (0) { print SAVEOUT "To prevent used only once"; }
-    open (STDOUT, ">$to")
-	    or die "objcache %Error: $! writing $to\n";
+    open (STDOUT, ">$to") or die "objcache %Error: $! writing $to\n";
     autoflush STDOUT 0;
     $self->run(@params);
     close(STDOUT);

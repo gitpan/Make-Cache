@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #4 $$Date: 2004/02/11 $$Author: wsnyder $
+#$Revision: #5 $$Date: 2004/02/12 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.011';
+our $VERSION = '1.012';
 
 #======================================================================
 
@@ -181,7 +181,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Revision: #4 $$Date: 2004/02/11 $$Author: wsnyder $ ', "\n";
+    print '$Revision: #5 $$Date: 2004/02/12 $$Author: wsnyder $ ', "\n";
     $SIG{__WARN__} = sub{};	#pod2text isn't clean.
     pod2text($0);
     exit (1);
@@ -353,6 +353,10 @@ leading -j, it will be stripped.
 Specifies the number of seconds to wait for a generated file written on one
 machine to become visible on another machine, before signalling an error.
 Defaults to 4 seconds, but may need to be increased on slow networks.
+
+=item OBJCACHE_RSH
+
+Specifies the program name to use for remote shells.  Defaults to rsh.
 
 =back
 
