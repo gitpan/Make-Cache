@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #3 $$Date: 2004/02/10 $$Author: wsnyder $
+#$Revision: #4 $$Date: 2004/02/11 $$Author: wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
@@ -20,13 +20,12 @@ BEGIN { require "t/test_utils.pl"; }
 chdir "test_dir";
 (Cwd::getcwd() =~ /test_dir/) or die;
 
-our $ObjCache = "../objcache --read --write";
+our $ObjCache = "$PERL ../objcache --read --write";
 
 ######################################################################
 
-our $Cache = Cwd::getcwd()."/cache";
-mkpath $Cache, 0777;
-$ENV{OBJCACHE_DIR} = $Cache;
+$ENV{OBJCACHE_DIR} = Cwd::getcwd()."/cache";
+$ENV{OBJCACHE_RUNTIME_DIR} = Cwd::getcwd()."/runtime";
 
 for (my $i=0; $i<2; $i++) {
     print "=========Write test $i\n";

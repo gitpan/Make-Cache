@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #4 $$Date: 2004/02/10 $$Author: wsnyder $
+#$Revision: #5 $$Date: 2004/02/11 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -23,7 +23,7 @@ use Carp;
 use strict;
 use vars qw ($Debug);
 
-our $VERSION = '1.010';
+our $VERSION = '1.011';
 
 #######################################################################
 

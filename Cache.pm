@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #6 $$Date: 2004/02/10 $$Author: wsnyder $
+#$Revision: #7 $$Date: 2004/02/11 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -35,7 +35,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.010';
+our $VERSION = '1.011';
 
 ######################################################################
 #### Creators
@@ -203,8 +203,11 @@ sub write {
 
     # Write it out
     if (!-w $self->{dir}) {
-	warn ("%Warning: Cache.pm: Cannot write dir '$self->{dir}' to cache '$store->{tgts_gbl}[0]'.\n");
-	return;
+	mkpath $self->{dir}, 0777;
+	if (!-w $self->{dir}) {
+	    warn ("%Warning: Cache.pm: Cannot write dir '$self->{dir}' to cache '$store->{tgts_gbl}[0]'.\n");
+	    return;
+	}
     }
 
     if (my $tgt = $self->tgts_missing) {

@@ -5,6 +5,10 @@ The contributors that suggested a given feature is shown in [].
 	
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 
+* Changes in Make::Cache 1.011 2/11/2004
+
+****	Fixes for cpan-testers on sparc-solaris.
+
 * Changes in Make::Cache 1.010 2/10/2004
 
 **	obj_cache renamed to objcache, and OBJ_CACHE_* environment
@@ -19,7 +23,7 @@ This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 **	First public release
 
 ----------------------------------------------------------------------
-$Revision: #3 $$Date: 2004/02/10 $$Author: wsnyder $
+$Revision: #4 $$Date: 2004/02/11 $$Author: wsnyder $
 ----------------------------------------------------------------------
 Copyright information:
 

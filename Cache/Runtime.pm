@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #4 $$Date: 2004/02/10 $$Author: wsnyder $
+#$Revision: #5 $$Date: 2004/02/11 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -26,11 +26,11 @@ use Carp;
 
 use strict;
 
-our $VERSION = '1.010';
+our $VERSION = '1.011';
 
 #######################################################################
 
-our $Cache_Dir = "/usr/local/common/lib/runtime";
+our $Cache_Dir = $ENV{OBJCACHE_RUNTIME_DIR} || "/usr/local/common/lib/runtime";
 
 #######################################################################
 
@@ -146,7 +146,7 @@ fast, catchable access to the database.
 =item cache_dir
 
 Return the default directory name for the cache.  With optional argument,
-set the cache directory name.
+set the cache directory name.  Defaults to OBJCACHE_RUNTIME_DIR.
 
 =item $string = format_time($seconds, $true_to_including_hours);
 
@@ -174,6 +174,17 @@ parameter, use database in that directory.
 =head1 FILES
 
 /usr/local/common/lib/runtime		Default for cache_dir()
+
+=head1 ENVIRONMENT
+
+=over 4
+
+=item OBJCACHE_RUNTIME_DIR
+
+Specifies the directory containing the runtime database.  Defaults to
+/usr/local/common/lib/runtime.
+
+=back
 
 =head1 SEE ALSO
 

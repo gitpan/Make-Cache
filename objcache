@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #3 $$Date: 2004/02/10 $$Author: wsnyder $
+#$Revision: #4 $$Date: 2004/02/11 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.010';
+our $VERSION = '1.011';
 
 #======================================================================
 
@@ -181,7 +181,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Revision: #3 $$Date: 2004/02/10 $$Author: wsnyder $ ', "\n";
+    print '$Revision: #4 $$Date: 2004/02/11 $$Author: wsnyder $ ', "\n";
     $SIG{__WARN__} = sub{};	#pod2text isn't clean.
     pod2text($0);
     exit (1);
@@ -330,6 +330,11 @@ Specifies the directory containing the cache.  Defaults to
 of the target name.  Under that is a directory based on a hash of the
 source file and compile switches.  Then finally .digest and .t# directory
 entries for each hash and target file.
+
+=item OBJCACHE_RUNTIME_DIR
+
+Specifies the directory containing the runtime database.  Defaults to
+/usr/local/common/lib/runtime.
 
 =item OBJCACHE_HOSTS
 

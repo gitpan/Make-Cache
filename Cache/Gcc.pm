@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #4 $$Date: 2004/02/10 $$Author: wsnyder $
+#$Revision: #5 $$Date: 2004/02/11 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -26,7 +26,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache::Obj);
 *Debug = \$Make::Cache::Obj::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.010';
+our $VERSION = '1.011';
 
 #######################################################################
 ## Methods that superclasses are likely to override
