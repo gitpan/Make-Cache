@@ -1,0 +1,334 @@
+#!/usr/local/bin/perl -w
+#$Revision: #4 $$Date: 2004/01/28 $$Author: wsnyder $
+######################################################################
+#
+# This program is Copyright 2002-2004 by Wilson Snyder.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of either the GNU General Public License or the
+# Perl Artistic License.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#                                                                           
+######################################################################
+
+require 5.006_001;
+
+# For testing
+use FindBin qw($RealBin);
+use lib "$RealBin/blib/lib";
+use lib "$RealBin/blib/arch";
+
+use Getopt::Long;
+use IO::File;
+use IO::Pipe;
+use Pod::Text;
+use File::Copy;
+use POSIX qw(:sys_wait_h);
+
+use Make::Cache::Gcc;
+use strict;
+
+our $Debug;
+
+our $VERSION = '1.000';
+
+#======================================================================
+
+# Directory where cache is stored
+our $Cache_Dir = ($ENV{OBJ_CACHE_DIR}||"/usr/local/common/lib/obj_cache");
+
+# Allow another calling program to override flag defaults
+use vars qw(@Obj_Cache_Additional_Flags);
+
+#======================================================================
+# main
+
+autoflush STDOUT 1;
+autoflush STDERR 1;
+umask 0;
+srand;
+
+my @params = ();
+
+our $Opt_Loud = 1;
+our $Opt_Read = 0;
+my $opt_clean;
+my $opt_dump;
+our $opt_dump_rm;
+our $Opt_Write = 0;
+our @Opt_Okdir;
+
+# Before reading standards, collect help & debug flags
+Getopt::Long::config ("pass_through", "no_auto_abbrev");
+if (!GetOptions (
+		 "help"		=> \&usage,
+		 "debug"	=> \&debug,
+		 "quiet!"	=> sub {shift; $Opt_Loud = !shift;},
+		 "clean!"	=> \$opt_clean,
+		 "dump!"	=> \$opt_dump,
+		 "dumprm!"	=> \$opt_dump_rm,
+		 "okdir=s"	=> sub {shift; push @Opt_Okdir, shift;},
+		 "read!"	=> \$Opt_Read,
+		 "write!"	=> \$Opt_Write,
+		 # Program and it's parameters
+		 "<>"		=> \&parameter,
+		 )) {
+    usage();
+}
+# Read rest of command line
+push @params, @ARGV;
+print "OBJCACHE R$Opt_Read W$Opt_Write: ",join(',',@params),"\n" if $Debug;
+
+$opt_dump = 1 if $opt_dump_rm;
+
+if ($opt_clean) {
+    my $oc = Make::Cache::Gcc->new (dir=>$Cache_Dir,);
+    $oc->clean();
+    !$params[0] or die "obj_cache: %Error: --clean doesn't take any other arguments\n";
+    exit(0);
+}
+if ($opt_dump) {
+    my $oc = Make::Cache::Gcc->new (dir=>$Cache_Dir,);
+    $oc->dump(rm=>$opt_dump_rm);
+    !$params[0] or die "obj_cache: %Error: --dump doesn't take any other arguments\n";
+    exit(0);
+}
+
+my @ocparam = (dir=>$Cache_Dir,
+	       remote_hosts=>[split(/[ :]/,$ENV{OBJ_CACHE_HOSTS}||"")],
+	       min_remote_runtime => 3,  # Secs
+	       min_cache_runtime  => 2,  # Secs
+	       nfs_wait => ($ENV{OBJ_CACHE_NFS_WAIT} || 4),
+	       edit_line_refs => {},
+	       ok_include_regexps => [],
+	       file_env => [ # Hash of global mnemonic and local value for global_filename funcs
+			     PWD => Cwd::getcwd(),
+			     PWD => ($ENV{PWD}||Cwd::getcwd()),
+			     ],
+	       @Obj_Cache_Additional_Flags,	# Allow another calling program to override these defaults
+	       );
+
+# Make class with the compile time parameters
+my $ochunt = Make::Cache::Gcc->new (@ocparam);
+$ochunt->ok_include_regexps(qr!^/usr/include/!);
+$ochunt->ok_include_regexps(qr!^/usr/lib/!);
+$ochunt->ok_include_regexps(qr!^/usr/local/include/!);
+foreach (@Opt_Okdir) { $ochunt->ok_include_regexps("^".quotemeta($_)); }
+
+$ochunt->cmds_lcl(@params);
+$ochunt->parse_cmds;
+$ochunt->tgts_unlink;   # Unlink all generated files, so there's no way a objcache bug could cache them
+
+my @tgts = $ochunt->tgts_lcl;
+(my $srcfile = $tgts[0]) =~ s/.*\///;   # Make it small so prints look nice
+
+$ochunt->preproc;
+my $ochit = $ochunt->find_hit if $Opt_Read;
+
+if ($ochit) {
+    print "      Compiling $srcfile...  Object Cache Hit\n" if $Opt_Loud;
+    $ochit->restore;
+    exit(0);
+} else {
+    if ($Opt_Loud) {
+	# Print all messages in single print statement, else make -j may split the lines.
+	my $msg = "      Compiling $srcfile...";
+	$msg .= "  Est ".Make::Cache::Runtime::format_time($ochunt->runtime) if defined $ochunt->runtime;
+	$msg .= " (on ".$ochunt->host.")" if $ochunt->host;
+	$msg .= "\n";
+	print $msg;
+    }
+}
+
+# Run command passed
+$ochunt->execute;
+
+# Fast compile, don't spend time in the cache, just update the runtime and build each time
+#if ($ochunt->runtime < $Remote_Runtime) {
+#	This was determined to be a bad idea, due to fluctuations around the critical time
+
+if ($Opt_Write) {
+    $ochunt->encache;
+} else {
+    $ochunt->runtime_write;
+}
+
+if ($Debug && $Opt_Read && $Opt_Write) {
+    $ochunt->clear_hash_cache;
+    my $mc = $ochunt->new();
+    my $hit = $mc->find_hit();
+    if (!$hit) {
+	warn "%Warning: Didn't hit own written hash!\n";
+    }
+}
+
+#----------------------------------------------------------------------
+
+sub usage {
+    print '$Revision: #4 $$Date: 2004/01/28 $$Author: wsnyder $ ', "\n";
+    $SIG{__WARN__} = sub{};	#pod2text isn't clean.
+    pod2text($0);
+    exit (1);
+}
+
+sub debug {
+    $Debug = 1;
+    $Make::Cache::Gcc::Debug = 1;
+}
+
+sub parameter {
+    my $param = shift;
+    if ($param =~ /^-/) {
+	die "obj_cache: %Error: Unknown switch before program: $param\n";
+    }
+    else {
+	push @params, $param;
+	die ("!FINISH");	# Magic to tell Getopt::Long to ignore other switches
+    }
+}
+
+#######################################################################
+__END__
+
+=pod
+
+=head1 NAME
+
+obj_cache - Cache results of running gcc/ghs on argument list
+
+=head1 SYNOPSIS
+
+C<obj_cache> --read --write g++ I<normal_gcc/ghs_command_line>
+
+=head1 DESCRIPTION
+
+obj_cache is called with a full g++ or cxppc command line.  It acts as if
+the compiler is called directly with all arguments.
+
+With --read and --write, obj_cache returns almost instantly when the same
+source is recompled.  It does this by caching a hash of the preprocessed
+gcc source files.  If gcc is invoked with the same inputs, the cache
+returns the object files without needing to invoke the compiler.
+
+=head1 DETAILS
+
+GCC is run in preprocessor mode to create a single source file.  This
+source file is then hashed.  Likewise any compiler switches are hashed, but
+with any define related switches (-Dfoo -Dfoo=value -Ufoo) stripped out as
+they are represented in the preprocessor output.  (This increases cache
+hits when there are many #ifdef controlled compiles going on.)
+
+The source hash is then looked up in the cache.  If it hits, the objects
+are copied from the cache into the local directory, and obj_cache exits.
+The files on disk will thus look like the compile finished, but much faster.
+
+If the source hash misses, the compiler is invoked.  The output of the
+compiler is written to the cache.  Obj_cache also determines how long the
+compile took (for informing the user), and may run the compile on another
+machine.
+
+=head1 EXAMPLE MAKEFILE
+
+This example will use the cache, and compile on all machines in the network
+with the "gcc" class.  It's also written to work if the obj_cache is not
+installed.  This uses the Schedule::Load package to determine what machines
+have free resources in the network.
+
+  ifeq ($(SLCHOOSED_HOST),)
+   OBJCACHE := 
+  else
+   OBJCACHE := @obj_cache --read --write
+   OBJ_CACHE_HOSTS := $(shell rschedule --class class_gcc hostnames)
+   export OBJ_CACHE_HOSTS
+  endif
+
+  %.o:	%.cpp
+	$(OBJCACHE) ${CXX} ${CPPFLAGS} -c $<
+
+=head1 ARGUMENTS
+
+=over 4
+
+=item --help
+
+Displays this message and program version and exits.
+
+=item --clean
+
+Remove any files older then one day from the cache.
+
+=item --dump
+
+For debugging, show the state of the cache.
+
+=item --dumprm
+
+Show the state of the cache, with the command line command needed to flush
+that entry.
+
+=item --okdir
+
+Specify a directory that should avoid the strange directory warning.  Use
+this with caution, as absolute paths may greatly decrease hit rates between
+different users.
+
+=item --read
+
+Read the cache and use cached objects if they exist.
+
+=item --noruntime
+
+Disable caching the execution time of the compile, nor show the runtime
+when compling.
+
+=item --write
+
+Write the cache with compiled objects.
+
+=back
+
+=head1 ENVIRONMENT
+
+=over 4
+
+=item OBJ_CACHE_DIR
+
+Specifies the directory containing the cache.  Defaults to
+/usr/local/common/lib/obj_cache.  Under this is a directory based on a hash
+of the target name.  Under that is a directory based on a hash of the
+source file and compile switches.  Then finally .digest and .t# directory
+entries for each hash and target file.
+
+=item OBJ_CACHE_HOSTS
+
+Specifies a comma seperated list of hosts to run compiles on.  When a
+compile needs to be run, obj_cache will pick a random host from this list,
+then remote shell to run the compile.  This allows a "make -j" run to use
+many machines in parallel.  Defaults to not remote shell.
+
+=item OBJ_CACHE_NFS_WAIT
+
+Specifies the number of seconds to wait for a generated file written on one
+machine to become visible on another machine, before signalling an error.
+Defaults to 4 seconds, but may need to be increased on slow networks.
+
+=back
+
+=head1 SEE ALSO
+
+C<Make::Cache::Gcc>
+
+=head1 AUTHORS
+
+Wilson Snyder <wsnyder@wsnyder.org>
+
+=cut
+
+######################################################################
+### Local Variables:
+### compile-command: "./obj_cache "
+### End:

@@ -1,0 +1,102 @@
+\input texinfo @c -*-texinfo-*-
+@c $Revision: #1 $$Date: 2004/01/28 $$Author: wsnyder $
+@c %**start of header
+@setfilename readme.info
+@settitle Perl Make::Cache Installation
+@c %**end of header
+
+@c DESCRIPTION: TexInfo: DOCUMENT source run through texinfo to produce README file
+@c Use 'make README' to produce the output file
+
+@node Top, Copyright, (dir), (dir)
+
+This is the Make::Cache Package.
+
+@menu
+* Copyright::                   
+* Summary::                     
+* Description::                 
+* Obtaining Distribution::      
+* Supported Systems::           
+* Installation::                
+@end menu
+
+@node Copyright, Summary, Top, Top
+@section Copyright
+
+This package is Copyright 2003-2004 by Wilson Snyder @email{wsnyder@@wsnyder.org}.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of either the GNU General Public License or the
+Perl Artistic License.
+
+This code is provided with no warranty of any kind, and is used entirely at
+your own risk.
+
+@node Summary, Description, Copyright, Top
+@section Summary
+
+Make::Cache provides packages and the obj_cache program to cache the
+results of compiler runs, so that later identical source code can be
+recompiled instantaneously.
+
+@node Description, Obtaining Distribution, Summary, Top
+@section Description
+
+Make::Cache provides packages and programs to support caching of
+Makefile targets, mostly the outputs of compiler runs.
+
+The main interface is the obj_cache program.  By simply prepending
+
+    obj_cache --read --write
+
+before any GCC compile lines in a makefile, you get instant
+recompilation of source files.
+
+Obj_cache also allows for distributing parallel make jobs across
+multiple machines in a server farm.
+
+@node Obtaining Distribution, Supported Systems, Description, Top
+@section Obtaining Distribution
+
+The latest version is available at 
+@uref{http://www.perl.org/CPAN/}
+
+@node Supported Systems, Installation, Obtaining Distribution, Top
+@section Supported Systems
+
+This version of Make::Cache has been built and tested on:
+
+@itemize @bullet
+@item i386-linux
+@end itemize
+
+It should run on any system with Perl and GCC.  It may be easily
+modified to support other compilers.
+
+@node Installation,  , Supported Systems, Top
+@section Installation
+
+@enumerate
+@item
+@code{cd} to the directory containing this README notice.
+
+@item
+Type @samp{perl Makefile.PL} to configure the package for your system.
+
+@item
+Type @samp{make} to compile.
+
+@item
+Type @samp{make test} to check the compilation.
+
+@item
+Type @samp{make install} to install the programs and any data files and
+documentation.
+
+@item
+See the @samp{man obj_cache} manpage for example usage in a Makefile.
+
+@end enumerate
+
+
