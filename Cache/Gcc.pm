@@ -1,5 +1,4 @@
-#!/usr/local/bin/perl -w
-#$Revision: #6 $$Date: 2004/02/12 $$Author: wsnyder $
+#$Revision: #12 $$Date: 2004/10/26 $$Author: ws150726 $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -26,7 +25,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache::Obj);
 *Debug = \$Make::Cache::Obj::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.012';
+our $VERSION = '1.013';
 
 #######################################################################
 ## Methods that superclasses are likely to override
@@ -35,7 +34,7 @@ sub is_legal_cmd {
     my $self = shift;
     my @cmds = @_;
     (my $prog = $cmds[0]) =~ s!.*/!!;
-    return "gnu" if ($prog eq "g++" || $prog eq "gcc");
+    return "gnu" if ($prog =~ /^g\+\+/ || $prog =~ /^gcc/);
     return "ghs" if ($prog eq "cxppc");
     return undef;
 }
@@ -107,10 +106,16 @@ sub parse_cmds {
     (defined $srcfiles[0]) or die "objcache: %Error: No source filename: $wholeParams\n";
 
     my $no_tgts = !defined $tgtfiles[0];
-
+    my $num_tgts = 0;
     foreach my $src (@srcfiles) {
 	($src =~ /\.(c|cc|cpp)$/)
 	    or die "objcache: %Error: Strange source filename: $src: $wholeParams\n";
+	# Multiple targets aren't cached properly, because we'd need to
+	# preprocess each source file seperately, then pass them all onto gcc.
+	# Otherwise, they'd just get concatenated which isn't the same thing
+	# with #defines, or with local static's of the same name.
+	(++$num_tgts == 1)
+	    or die "objcache: %Error: Multiple source filenames not supported: $src: $wholeParams\n";
 	$self->deps_lcl($src);
 	if ($no_tgts) {  # Gcc presumes given baz/foo.c that output goes to PWD/foo.o
 	    ((my $ofile = $src) =~ s/\.(c|cc|cpp)$/.o/)
@@ -172,17 +177,25 @@ Make::Cache::Gcc will run a GCC in pre-process mode to create a single
 source file.  This file is then hashed with Make::Cache::Obj, and hits
 detected. On misses, GCC is run again to create the targets.
 
-=head1 FUNCTIONS
+=head1 FUNCTIONS, etc
 
-See C<Make::Cache::Obj>
+See L<Make::Cache::Obj>
 
-=head1 SEE ALSO
+=head1 DISTRIBUTION
 
-C<objcache>, C<Make::Cache::Obj>
+The latest version is available from CPAN and from L<http://www.veripool.com/>.
+
+Copyright 2000-2004 by Wilson Snyder.  This package is free software; you
+can redistribute it and/or modify it under the terms of either the GNU
+Lesser General Public License or the Perl Artistic License.
 
 =head1 AUTHORS
 
 Wilson Snyder <wsnyder@wsnyder.org>
+
+=head1 SEE ALSO
+
+L<objcache>, L<Make::Cache>, L<Make::Cache::Obj>
 
 =cut
 

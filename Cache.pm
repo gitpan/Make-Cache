@@ -1,5 +1,4 @@
-#!/usr/local/bin/perl -w
-#$Revision: #8 $$Date: 2004/02/12 $$Author: wsnyder $
+#$Revision: #13 $$Date: 2004/10/26 $$Author: ws150726 $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -35,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.012';
+our $VERSION = '1.013';
 
 ######################################################################
 #### Creators
@@ -392,7 +391,7 @@ sub _clean_dir {
 		$keepdir = 1;
 	    } else {
 		print "  Removing old dir $file\n" if $Debug;
-		eval { rmtree $file; }   # Quietly...
+		eval { rmtree $file,0,1; }   # Quietly...
 	    }
 	} elsif ($file =~ /\.digest$/) {
 	    # We look at modtime, as it's faster and prevents death if it's malformed
@@ -661,14 +660,22 @@ local compile area.
 
 =back
 
-=head1 SEE ALSO
+=head1 DISTRIBUTION
 
-C<objcache>, C<Make::Cache::Runtime>, C<Make::Cache::Hash>,
-C<Make::Cache::Obj>, C<Make::Cache::Gcc>
+The latest version is available from CPAN and from L<http://www.veripool.com/>.
+
+Copyright 2000-2004 by Wilson Snyder.  This package is free software; you
+can redistribute it and/or modify it under the terms of either the GNU
+Lesser General Public License or the Perl Artistic License.
 
 =head1 AUTHORS
 
 Wilson Snyder <wsnyder@wsnyder.org>
+
+=head1 SEE ALSO
+
+L<objcache>, L<Make::Cache::Runtime>, L<Make::Cache::Hash>,
+L<Make::Cache::Obj>, L<Make::Cache::Gcc>
 
 =cut
 

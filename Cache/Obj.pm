@@ -1,5 +1,4 @@
-#!/usr/local/bin/perl -w
-#$Revision: #8 $$Date: 2004/02/12 $$Author: wsnyder $
+#$Revision: #15 $$Date: 2004/10/26 $$Author: ws150726 $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -33,7 +32,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.012';
+our $VERSION = '1.013';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;
@@ -208,7 +207,7 @@ sub execute {
 	# -n gets around blocking waiting for stdin when 'make' is in the background
 	# FIX: Note this will break if we ever objcache some make target that requires stdin!
 	unshift @params, ($ENV{OBJCACHE_RSH}||'rsh',
-			  '-n', $host, 'cd', Cwd::getcwd(), '&&', 'nice', '-9',);
+			  '-n', $host, 'cd', Cwd::getcwd(), '&&', '/bin/nice', '-9',);
     }
 
     my $runtime = $self->run(@params);
@@ -501,13 +500,21 @@ compile.
 
 =back
 
-=head1 SEE ALSO
+=head1 DISTRIBUTION
 
-C<objcache>, C<Make::Cache>, C<Make::Cache::Runtime>, C<Make::Cache::Gcc>
+The latest version is available from CPAN and from L<http://www.veripool.com/>.
+
+Copyright 2000-2004 by Wilson Snyder.  This package is free software; you
+can redistribute it and/or modify it under the terms of either the GNU
+Lesser General Public License or the Perl Artistic License.
 
 =head1 AUTHORS
 
 Wilson Snyder <wsnyder@wsnyder.org>
+
+=head1 SEE ALSO
+
+L<objcache>, L<Make::Cache>, L<Make::Cache::Runtime>, L<Make::Cache::Gcc>
 
 =cut
 

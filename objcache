@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #5 $$Date: 2004/02/12 $$Author: wsnyder $
+#$Revision: #10 $$Date: 2004/10/26 $$Author: ws150726 $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -19,8 +19,8 @@ require 5.006_001;
 
 # For testing
 use FindBin qw($RealBin);
-use lib "$RealBin/blib/lib";
-use lib "$RealBin/blib/arch";
+use lib "$RealBin/blib/lib";  # For local testing
+use lib "$RealBin/blib/arch"; # For local testing
 
 use Getopt::Long;
 use IO::File;
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.012';
+our $VERSION = '1.013';
 
 #======================================================================
 
@@ -129,6 +129,7 @@ my $ochunt = Make::Cache::Gcc->new (@ocparam);
 $ochunt->ok_include_regexps(qr!^/usr/include/!);
 $ochunt->ok_include_regexps(qr!^/usr/lib/!);
 $ochunt->ok_include_regexps(qr!^/usr/local/include/!);
+$ochunt->ok_include_regexps(qr!^/usr/share/!);
 foreach (@Opt_Okdir) { $ochunt->ok_include_regexps("^".quotemeta($_)); }
 
 $ochunt->cmds_lcl(@params);
@@ -181,7 +182,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Revision: #5 $$Date: 2004/02/12 $$Author: wsnyder $ ', "\n";
+    print '$Revision: #10 $$Date: 2004/10/26 $$Author: ws150726 $ ', "\n";
     $SIG{__WARN__} = sub{};	#pod2text isn't clean.
     pod2text($0);
     exit (1);
@@ -215,7 +216,7 @@ objcache - Cache results of running gcc/ghs on argument list
 
 =head1 SYNOPSIS
 
-C<objcache> --read --write g++ I<normal_gcc/ghs_command_line>
+  objcache --read --write g++ <normal_gcc/ghs_command_line>
 
 =head1 DESCRIPTION
 
@@ -360,13 +361,21 @@ Specifies the program name to use for remote shells.  Defaults to rsh.
 
 =back
 
-=head1 SEE ALSO
+=head1 DISTRIBUTION
 
-C<Make::Cache::Gcc>
+The latest version is available from CPAN and from L<http://www.veripool.com/>.
+
+Copyright 2000-2004 by Wilson Snyder.  This package is free software; you
+can redistribute it and/or modify it under the terms of either the GNU
+Lesser General Public License or the Perl Artistic License.
 
 =head1 AUTHORS
 
 Wilson Snyder <wsnyder@wsnyder.org>
+
+=head1 SEE ALSO
+
+L<Make::Cache>
 
 =cut
 

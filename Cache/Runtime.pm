@@ -1,5 +1,4 @@
-#!/usr/local/bin/perl -w
-#$Revision: #7 $$Date: 2004/02/12 $$Author: wsnyder $
+#$Revision: #12 $$Date: 2004/10/26 $$Author: ws150726 $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -26,7 +25,7 @@ use Carp;
 
 use strict;
 
-our $VERSION = '1.012';
+our $VERSION = '1.013';
 
 #######################################################################
 
@@ -158,7 +157,8 @@ argument, return as HH:MM:SS.
 
 Hash the key, and write a database entry file with a copy of the data in
 the persist reference.  With dir=> named parameter, use database in that
-directory.
+directory.  Note to prevent problems between different versions of perl, you
+may want to include the Perl version number in the key hash.
 
 =item my $ref = read (key=>$key);
 
@@ -187,13 +187,21 @@ Specifies the directory containing the runtime database.  Defaults to
 
 =back
 
-=head1 SEE ALSO
+=head1 DISTRIBUTION
 
-C<Make::Cache>
+The latest version is available from CPAN and from L<http://www.veripool.com/>.
+
+Copyright 2000-2004 by Wilson Snyder.  This package is free software; you
+can redistribute it and/or modify it under the terms of either the GNU
+Lesser General Public License or the Perl Artistic License.
 
 =head1 AUTHORS
 
 Wilson Snyder <wsnyder@wsnyder.org>
+
+=head1 SEE ALSO
+
+L<objcache>, L<Make::Cache>
 
 =cut
 

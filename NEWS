@@ -5,6 +5,10 @@ The contributors that suggested a given feature is shown in [].
 	
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 
+* Changes in Make::Cache 1.013 10/26/2004
+
+***	Fix nice level under csh.
+
 * Changes in Make::Cache 1.012 2/12/2004
 
 ***	Fix warning when compiling in background. [Brad Cervenak]
@@ -29,7 +33,7 @@ This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 **	First public release
 
 ----------------------------------------------------------------------
-$Revision: #5 $$Date: 2004/02/12 $$Author: wsnyder $
+$Revision: #7 $$Date: 2004/10/26 $$Author: ws150726 $
 ----------------------------------------------------------------------
 Copyright information:
 

@@ -1,5 +1,5 @@
-#!/usr/local/bin/perl -w
-#$Revision: #4 $$Date: 2004/02/10 $$Author: wsnyder $
+#!/usr/bin/perl -w
+#$Revision: #5 $$Date: 2004/06/21 $$Author: ws150726 $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #

@@ -1,5 +1,4 @@
-#!/usr/local/bin/perl -w
-#$Revision: #6 $$Date: 2004/02/12 $$Author: wsnyder $
+#$Revision: #10 $$Date: 2004/10/26 $$Author: ws150726 $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -23,7 +22,7 @@ use Carp;
 use strict;
 use vars qw ($Debug);
 
-our $VERSION = '1.012';
+our $VERSION = '1.013';
 
 #######################################################################
 
@@ -245,13 +244,21 @@ If any does not exist, return undef.
 
 =back
 
-=head1 SEE ALSO
+=head1 DISTRIBUTION
 
-C<Make::Cache>
+The latest version is available from CPAN and from L<http://www.veripool.com/>.
+
+Copyright 2000-2004 by Wilson Snyder.  This package is free software; you
+can redistribute it and/or modify it under the terms of either the GNU
+Lesser General Public License or the Perl Artistic License.
 
 =head1 AUTHORS
 
 Wilson Snyder <wsnyder@wsnyder.org>
+
+=head1 SEE ALSO
+
+L<objcache>, L<Make::Cache>
 
 =cut
 
