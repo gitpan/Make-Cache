@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #3 $$Date: 2004/01/28 $$Author: wsnyder $
+#$Revision: #4 $$Date: 2004/02/10 $$Author: wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
@@ -72,7 +72,7 @@ for (my $i=0; $i<2; $i++) {
 
 
 if (0) {
-    my $mc = Make::Cache->new (dir=>'/usr/local/common/lib/obj_cache/fc');
+    my $mc = Make::Cache->new (dir=>'/usr/local/common/lib/objcache/fc');
     $mc->dump();
     ok(1);
 }

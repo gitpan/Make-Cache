@@ -1,5 +1,5 @@
 \input texinfo @c -*-texinfo-*-
-@c $Revision: #1 $$Date: 2004/01/28 $$Author: wsnyder $
+@c $Revision: #2 $$Date: 2004/02/10 $$Author: wsnyder $
 @c %**start of header
 @setfilename readme.info
 @settitle Perl Make::Cache Installation
@@ -36,7 +36,7 @@ your own risk.
 @node Summary, Description, Copyright, Top
 @section Summary
 
-Make::Cache provides packages and the obj_cache program to cache the
+Make::Cache provides packages and the objcache program to cache the
 results of compiler runs, so that later identical source code can be
 recompiled instantaneously.
 
@@ -46,14 +46,14 @@ recompiled instantaneously.
 Make::Cache provides packages and programs to support caching of
 Makefile targets, mostly the outputs of compiler runs.
 
-The main interface is the obj_cache program.  By simply prepending
+The main interface is the objcache program.  By simply prepending
 
-    obj_cache --read --write
+    objcache --read --write
 
 before any GCC compile lines in a makefile, you get instant
 recompilation of source files.
 
-Obj_cache also allows for distributing parallel make jobs across
+Objcache also allows for distributing parallel make jobs across
 multiple machines in a server farm.
 
 @node Obtaining Distribution, Supported Systems, Description, Top
@@ -95,7 +95,7 @@ Type @samp{make install} to install the programs and any data files and
 documentation.
 
 @item
-See the @samp{man obj_cache} manpage for example usage in a Makefile.
+See the @samp{man objcache} manpage for example usage in a Makefile.
 
 @end enumerate
 

@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #4 $$Date: 2004/01/28 $$Author: wsnyder $
+#$Revision: #3 $$Date: 2004/02/10 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -34,15 +34,15 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.000';
+our $VERSION = '1.010';
 
 #======================================================================
 
 # Directory where cache is stored
-our $Cache_Dir = ($ENV{OBJ_CACHE_DIR}||"/usr/local/common/lib/obj_cache");
+our $Cache_Dir = ($ENV{OBJCACHE_DIR}||"/usr/local/common/lib/objcache");
 
 # Allow another calling program to override flag defaults
-use vars qw(@Obj_Cache_Additional_Flags);
+use vars qw(@ObjCache_Additional_Flags);
 
 #======================================================================
 # main
@@ -59,6 +59,7 @@ our $Opt_Read = 0;
 my $opt_clean;
 my $opt_dump;
 our $opt_dump_rm;
+our $opt_jobs;
 our $Opt_Write = 0;
 our @Opt_Okdir;
 
@@ -71,6 +72,7 @@ if (!GetOptions (
 		 "clean!"	=> \$opt_clean,
 		 "dump!"	=> \$opt_dump,
 		 "dumprm!"	=> \$opt_dump_rm,
+		 "jobs:s"	=> \$opt_jobs,
 		 "okdir=s"	=> sub {shift; push @Opt_Okdir, shift;},
 		 "read!"	=> \$Opt_Read,
 		 "write!"	=> \$Opt_Write,
@@ -85,31 +87,41 @@ print "OBJCACHE R$Opt_Read W$Opt_Write: ",join(',',@params),"\n" if $Debug;
 
 $opt_dump = 1 if $opt_dump_rm;
 
+if (defined $opt_jobs) {
+    my @hosts = (split(/[ :]/,$opt_jobs||$ENV{OBJCACHE_HOSTS}||""));
+    my $jobs = $ENV{OBJCACHE_JOBS} || "0";
+    $jobs =~ s/^-j//;   # so OBJCACHE_JOBS can have the make '-j #' flag in it
+    $jobs ||= ($#hosts + 1);
+    $jobs = 1 if $jobs==0;
+    $ENV{OBJCACHE_JOBS} = $jobs;
+    print "$jobs\n";
+    exit(0);
+}
 if ($opt_clean) {
     my $oc = Make::Cache::Gcc->new (dir=>$Cache_Dir,);
     $oc->clean();
-    !$params[0] or die "obj_cache: %Error: --clean doesn't take any other arguments\n";
+    !$params[0] or die "objcache: %Error: --clean doesn't take any other arguments\n";
     exit(0);
 }
 if ($opt_dump) {
     my $oc = Make::Cache::Gcc->new (dir=>$Cache_Dir,);
     $oc->dump(rm=>$opt_dump_rm);
-    !$params[0] or die "obj_cache: %Error: --dump doesn't take any other arguments\n";
+    !$params[0] or die "objcache: %Error: --dump doesn't take any other arguments\n";
     exit(0);
 }
 
 my @ocparam = (dir=>$Cache_Dir,
-	       remote_hosts=>[split(/[ :]/,$ENV{OBJ_CACHE_HOSTS}||"")],
+	       remote_hosts=>[split(/[ :]/,$ENV{OBJCACHE_HOSTS}||"")],
 	       min_remote_runtime => 3,  # Secs
 	       min_cache_runtime  => 2,  # Secs
-	       nfs_wait => ($ENV{OBJ_CACHE_NFS_WAIT} || 4),
+	       nfs_wait => ($ENV{OBJCACHE_NFS_WAIT} || 4),
 	       edit_line_refs => {},
 	       ok_include_regexps => [],
 	       file_env => [ # Hash of global mnemonic and local value for global_filename funcs
 			     PWD => Cwd::getcwd(),
 			     PWD => ($ENV{PWD}||Cwd::getcwd()),
 			     ],
-	       @Obj_Cache_Additional_Flags,	# Allow another calling program to override these defaults
+	       @ObjCache_Additional_Flags,	# Allow another calling program to override these defaults
 	       );
 
 # Make class with the compile time parameters
@@ -169,7 +181,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Revision: #4 $$Date: 2004/01/28 $$Author: wsnyder $ ', "\n";
+    print '$Revision: #3 $$Date: 2004/02/10 $$Author: wsnyder $ ', "\n";
     $SIG{__WARN__} = sub{};	#pod2text isn't clean.
     pod2text($0);
     exit (1);
@@ -183,7 +195,7 @@ sub debug {
 sub parameter {
     my $param = shift;
     if ($param =~ /^-/) {
-	die "obj_cache: %Error: Unknown switch before program: $param\n";
+	die "objcache: %Error: Unknown switch before program: $param\n";
     }
     else {
 	push @params, $param;
@@ -191,6 +203,7 @@ sub parameter {
     }
 }
 
+1;
 #######################################################################
 __END__
 
@@ -198,18 +211,18 @@ __END__
 
 =head1 NAME
 
-obj_cache - Cache results of running gcc/ghs on argument list
+objcache - Cache results of running gcc/ghs on argument list
 
 =head1 SYNOPSIS
 
-C<obj_cache> --read --write g++ I<normal_gcc/ghs_command_line>
+C<objcache> --read --write g++ I<normal_gcc/ghs_command_line>
 
 =head1 DESCRIPTION
 
-obj_cache is called with a full g++ or cxppc command line.  It acts as if
+objcache is called with a full g++ or cxppc command line.  It acts as if
 the compiler is called directly with all arguments.
 
-With --read and --write, obj_cache returns almost instantly when the same
+With --read and --write, objcache returns almost instantly when the same
 source is recompled.  It does this by caching a hash of the preprocessed
 gcc source files.  If gcc is invoked with the same inputs, the cache
 returns the object files without needing to invoke the compiler.
@@ -223,31 +236,39 @@ they are represented in the preprocessor output.  (This increases cache
 hits when there are many #ifdef controlled compiles going on.)
 
 The source hash is then looked up in the cache.  If it hits, the objects
-are copied from the cache into the local directory, and obj_cache exits.
+are copied from the cache into the local directory, and objcache exits.
 The files on disk will thus look like the compile finished, but much faster.
 
 If the source hash misses, the compiler is invoked.  The output of the
-compiler is written to the cache.  Obj_cache also determines how long the
+compiler is written to the cache.  objcache also determines how long the
 compile took (for informing the user), and may run the compile on another
 machine.
 
 =head1 EXAMPLE MAKEFILE
 
 This example will use the cache, and compile on all machines in the network
-with the "gcc" class.  It's also written to work if the obj_cache is not
+with the "gcc" class.  It's also written to work if the objcache is not
 installed.  This uses the Schedule::Load package to determine what machines
 have free resources in the network.
 
   ifeq ($(SLCHOOSED_HOST),)
-   OBJCACHE := 
+   export OBJCACHE := 
   else
-   OBJCACHE := @obj_cache --read --write
-   OBJ_CACHE_HOSTS := $(shell rschedule --class class_gcc hostnames)
-   export OBJ_CACHE_HOSTS
+   export OBJCACHE_HOSTS := $(shell rschedule --class class_gcc hostnames)
+   export OBJCACHE_JOBS := -j $(shell objcache --jobs "$(OBJCACHE_HOSTS)")
+   export OBJCACHE := @objcache --read --write
   endif
 
   %.o:	%.cpp
 	$(OBJCACHE) ${CXX} ${CPPFLAGS} -c $<
+
+If you are using a submake (where one makefile calls another), you may
+place the export lines in the top level makefile.  Then, spawn the submakes
+using the number of jobs calculated by objcache --jobs:
+
+  top_level_target:
+        $(MAKE) $(OBJCACHE_JOBS) top_level_target
+
 
 =head1 ARGUMENTS
 
@@ -269,6 +290,13 @@ For debugging, show the state of the cache.
 
 Show the state of the cache, with the command line command needed to flush
 that entry.
+
+=item --jobs
+
+Return a suggestion for the number of parallel make jobs to be run.  This
+is the contents of the OBJCACHE_JOBS variable, or if not set, a count of
+the number of hosts listed in the OBJCACHE_HOSTS variable.  With a
+argument, use the argument instead of the OBJCACHE_HOSTS variable.
 
 =item --okdir
 
@@ -295,22 +323,27 @@ Write the cache with compiled objects.
 
 =over 4
 
-=item OBJ_CACHE_DIR
+=item OBJCACHE_DIR
 
 Specifies the directory containing the cache.  Defaults to
-/usr/local/common/lib/obj_cache.  Under this is a directory based on a hash
+/usr/local/common/lib/objcache.  Under this is a directory based on a hash
 of the target name.  Under that is a directory based on a hash of the
 source file and compile switches.  Then finally .digest and .t# directory
 entries for each hash and target file.
 
-=item OBJ_CACHE_HOSTS
+=item OBJCACHE_HOSTS
 
 Specifies a comma seperated list of hosts to run compiles on.  When a
-compile needs to be run, obj_cache will pick a random host from this list,
+compile needs to be run, objcache will pick a random host from this list,
 then remote shell to run the compile.  This allows a "make -j" run to use
 many machines in parallel.  Defaults to not remote shell.
 
-=item OBJ_CACHE_NFS_WAIT
+=item OBJCACHE_JOBS
+
+Specifies the forced return value for objcache --jobs.  If there is a
+leading -j, it will be stripped.
+
+=item OBJCACHE_NFS_WAIT
 
 Specifies the number of seconds to wait for a generated file written on one
 machine to become visible on another machine, before signalling an error.
@@ -330,5 +363,5 @@ Wilson Snyder <wsnyder@wsnyder.org>
 
 ######################################################################
 ### Local Variables:
-### compile-command: "./obj_cache "
+### compile-command: "./objcache "
 ### End:

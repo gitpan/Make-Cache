@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #4 $$Date: 2004/01/28 $$Author: wsnyder $
+#$Revision: #5 $$Date: 2004/02/10 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -33,7 +33,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.000';
+our $VERSION = '1.010';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;
@@ -46,7 +46,7 @@ END {
     unlink $Temp_Filename if $Temp_Filename && !$Debug;
 }
 
-use constant One_Compile_Filename => ($ENV{TEMP}||$ENV{TMP}||"/tmp")."/.obj_cache_one_cc";  # Keep on the local machine/build so doesn't conflict with other remote jobs
+use constant One_Compile_Filename => ($ENV{TEMP}||$ENV{TMP}||"/tmp")."/.objcache_one_cc";  # Keep on the local machine/build so doesn't conflict with other remote jobs
 use constant One_Delay_Override => (10*60);	# Seconds of compiler time to ignore one_compile file after
 
 ######################################################################
@@ -107,7 +107,7 @@ sub preproc {
     my $ext = "i";
     my @srcs = $self->deps_lcl;
     $ext = $1 if $srcs[0] =~ /^.*\.([^.]+)$/;
-    $self->temp_filename(".obj_cache_$$.$ext");
+    $self->temp_filename(".objcache_$$.$ext");
 
     # Execute the preprocessor
     $self->run_stdout($self->temp_filename, $self->preproc_cmds);
@@ -131,7 +131,7 @@ sub _preproc_hash {
     my $wholefile;
     {
 	my $fh = IO::File->new($self->temp_filename)
-	    or die "obj_cache: %Error: Preprocessor failed: ".join(' ',$self->preproc_cmds)."\n";
+	    or die "objcache: %Error: Preprocessor failed: ".join(' ',$self->preproc_cmds)."\n";
 	local $/; undef $/;
 	$wholefile = <$fh>;	# Much faster then reading a line.
 	$fh->close;
@@ -180,7 +180,7 @@ sub included_file_check {
 	foreach my $re (@{$self->{ok_include_regexps}}) {
 	    return if ($dir =~ /$re/);
 	}
-	warn "obj_cache: %Warning: Strange include directory: $inc\n";
+	warn "objcache: %Warning: Strange include directory: $inc\n";
     }
 }
 
@@ -217,7 +217,7 @@ sub execute {
 	    last if !$self->tgts_missing;
 	}
 	if (my $tgt=$self->tgts_missing) {
-	    die "obj_cache: %Error: $tgt not created (pwd=".Cwd::getcwd().", time=".time().")\n";
+	    die "objcache: %Error: $tgt not created (pwd=".Cwd::getcwd().", time=".time().")\n";
 	}
     }
 
@@ -262,7 +262,7 @@ sub run_stdout {
     open (SAVEOUT, ">&STDOUT") or croak "%Error: Can't dup stdout,";
     if (0) { print SAVEOUT "To prevent used only once"; }
     open (STDOUT, ">$to")
-	    or die "obj_cache %Error: $! writing $to\n";
+	    or die "objcache %Error: $! writing $to\n";
     autoflush STDOUT 0;
     $self->run(@params);
     close(STDOUT);
@@ -288,7 +288,7 @@ sub encache {
 
     my ($time,$fn) = Make::Cache::Hash::newest(filenames=>[$self->deps_lcl],);
     if (!$time) {
-	warn "obj_cache: %Warning: Source file missing during compile: $fn\n";
+	warn "objcache: %Warning: Source file missing during compile: $fn\n";
 	return;  # Don't cache it!!!
     }
 
@@ -296,7 +296,7 @@ sub encache {
 
     if (($time||0) > (time()+2-($self->runtime))) {
 	# If a src file changed within the time window we were compiling for... (w/2 sec slop)
-	warn "obj_cache: -Info: Clock skew detected, or source file modified during compile: $fn\n";
+	warn "objcache: -Info: Clock skew detected, or source file modified during compile: $fn\n";
 	return;  # Don't cache it!!!
     }
 
@@ -327,7 +327,7 @@ sub runtime_write {
     return if !$self->{runtime};
     Make::Cache::Runtime::write(key=>$self->tgts_name_digest,
 			 persist=>{ key=>$self->tgts_name_digest,
-				    #prog=>'obj_cache',  #smaller-> more likely to fit in directories
+				    #prog=>'objcache',  #smaller-> more likely to fit in directories
 				    runtime=>$self->{runtime}, },
 			 );
 }
@@ -345,7 +345,7 @@ sub cc_running_lock {
     my $fh = IO::File->new(One_Compile_Filename,"w");
     #print "TOUCH ".One_Compile_Filename."\n";
     if (!$fh) {  # Non-fatal, as race case can do this, & it's no reason to abort the compilation
-	warn "obj_cache: -Note: $! writing ".One_Compile_Filename."\n";
+	warn "objcache: -Note: $! writing ".One_Compile_Filename."\n";
 	return;
     }
     $fh->close();
@@ -501,7 +501,7 @@ compile.
 
 =head1 SEE ALSO
 
-C<obj_cache>, C<Make::Cache>, C<Make::Cache::Runtime>, C<Make::Cache::Gcc>
+C<objcache>, C<Make::Cache>, C<Make::Cache::Runtime>, C<Make::Cache::Gcc>
 
 =head1 AUTHORS
 

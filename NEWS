@@ -5,12 +5,21 @@ The contributors that suggested a given feature is shown in [].
 	
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 
+* Changes in Make::Cache 1.010 2/10/2004
+
+**	obj_cache renamed to objcache, and OBJ_CACHE_* environment
+	variables becomes OBJCACHE*. This makes the variable naming
+	consistent, and prevents problems in enviornments where obj_* are
+	temporary files.
+
+***	Added objcache --jobs, and OBJCACHE_JOBS documentation.
+
 * Changes in Make::Cache 1.000 1/28/2004
 
 **	First public release
 
 ----------------------------------------------------------------------
-$Revision: #1 $$Date: 2004/01/28 $$Author: wsnyder $
+$Revision: #3 $$Date: 2004/02/10 $$Author: wsnyder $
 ----------------------------------------------------------------------
 Copyright information:
 

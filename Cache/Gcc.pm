@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #3 $$Date: 2004/01/27 $$Author: wsnyder $
+#$Revision: #4 $$Date: 2004/02/10 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -26,7 +26,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache::Obj);
 *Debug = \$Make::Cache::Obj::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.000';
+our $VERSION = '1.010';
 
 #######################################################################
 ## Methods that superclasses are likely to override
@@ -51,9 +51,9 @@ sub parse_cmds {
     my @params = $self->cmds_lcl;
 
     my $wholeParams = join(' ',@params);
-    $params[0] or die "obj_cache: %Error: Not passed any program on command line\n";
+    $params[0] or die "objcache: %Error: Not passed any program on command line\n";
     my $ccType = $self->is_legal_cmd(@params)
-	or die "obj_cache: %Error: Unknown program $params[0] (Or use --help)\n";
+	or die "objcache: %Error: Unknown program $params[0] (Or use --help)\n";
 
     # Parse cc's arguments
     my $lastsw;
@@ -104,23 +104,23 @@ sub parse_cmds {
 	print "   HashGbl: ",join(' ',$self->flags_gbl),"\n";
     }
 
-    (defined $srcfiles[0]) or die "obj_cache: %Error: No source filename: $wholeParams\n";
+    (defined $srcfiles[0]) or die "objcache: %Error: No source filename: $wholeParams\n";
 
     my $no_tgts = !defined $tgtfiles[0];
 
     foreach my $src (@srcfiles) {
 	($src =~ /\.(c|cc|cpp)$/)
-	    or die "obj_cache: %Error: Strange source filename: $src: $wholeParams\n";
+	    or die "objcache: %Error: Strange source filename: $src: $wholeParams\n";
 	$self->deps_lcl($src);
 	if ($no_tgts) {  # Gcc presumes given baz/foo.c that output goes to PWD/foo.o
 	    ((my $ofile = $src) =~ s/\.(c|cc|cpp)$/.o/)
-		or die "obj_cache: %Error: Strange source filename: $src: $wholeParams\n";
+		or die "objcache: %Error: Strange source filename: $src: $wholeParams\n";
 	    $ofile =~ s%.*[\/\\]%%;	# Output goes to PWD, not source's location
 	    push @tgtfiles, $ofile;
 	}
 	if ($dbo) {  # Ghs presumes given baz/foo.c that output goes to PWD/foo.o
 	    ((my $dbofile = $tgtfiles[0]) =~ s/\.(o)$/.dbo/)
-		or die "obj_cache: %Error: Strange .o filename: $tgtfiles[0]: $wholeParams\n";
+		or die "objcache: %Error: Strange .o filename: $tgtfiles[0]: $wholeParams\n";
 	    # Output goes to same dir as .o file
 	    push @tgtfiles, $dbofile;
 	    #?? $dbo = 0;
@@ -178,7 +178,7 @@ See C<Make::Cache::Obj>
 
 =head1 SEE ALSO
 
-C<obj_cache>, C<Make::Cache::Obj>
+C<objcache>, C<Make::Cache::Obj>
 
 =head1 AUTHORS
 

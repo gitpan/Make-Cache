@@ -7,7 +7,7 @@ MANIFEST
 Makefile.PL
 NEWS
 README
-obj_cache
+objcache
 readme.texi
 t/10_runtime.t
 t/20_hash.d

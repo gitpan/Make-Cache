@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl -w
-#$Revision: #4 $$Date: 2004/01/28 $$Author: wsnyder $
+#$Revision: #6 $$Date: 2004/02/10 $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2004 by Wilson Snyder.
@@ -35,7 +35,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.000';
+our $VERSION = '1.010';
 
 ######################################################################
 #### Creators
@@ -203,7 +203,7 @@ sub write {
 
     # Write it out
     if (!-w $self->{dir}) {
-	warn ("%Warning: Cache.pm: Cannot write dir '$self->{dir}' to cache '$store->{tgts_gbl}[0].\n");
+	warn ("%Warning: Cache.pm: Cannot write dir '$self->{dir}' to cache '$store->{tgts_gbl}[0]'.\n");
 	return;
     }
 
@@ -252,7 +252,7 @@ sub restore {
 	# Can't hard link, as might be on different file system
 	print "    ln -s $from $tgt\n" if $Debug;
 	unlink $tgt;
-	symlink $from, $tgt or die "obj_cache: %Error: Can't ln -s $from $tgt: $!\n";
+	symlink $from, $tgt or die "objcache: %Error: Can't ln -s $from $tgt: $!\n";
 	touch($tgt);
     }
 
@@ -660,7 +660,7 @@ local compile area.
 
 =head1 SEE ALSO
 
-C<obj_cache>, C<Make::Cache::Runtime>, C<Make::Cache::Hash>,
+C<objcache>, C<Make::Cache::Runtime>, C<Make::Cache::Hash>,
 C<Make::Cache::Obj>, C<Make::Cache::Gcc>
 
 =head1 AUTHORS
