@@ -5,7 +5,7 @@ Cache/Obj.pm
 Cache/Runtime.pm
 Makefile.PL
 MANIFEST
-NEWS
+Changes
 objcache
 README
 readme.texi
@@ -17,3 +17,4 @@ t/40_cache.t
 t/50_gcc.t
 t/90_objcache.t
 t/test_utils.pl
+META.yml                                 Module meta-data (added by MakeMaker)

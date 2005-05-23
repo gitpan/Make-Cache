@@ -1,0 +1,49 @@
+Revision history for Perl extension Make::Cache
+
+The contributors that suggested a given feature are shown in [].
+	
+* Make::Cache 1.020 5/23/2005
+
+***	With --distcc, use distcc instead of logging in remotely.
+
+* Make::Cache 1.013 10/26/2004
+
+***	Fix nice level under csh.
+
+* Make::Cache 1.012 2/12/2004
+
+***	Fix warning when compiling in background. [Brad Cervenak]
+
+****	Fixes for cpan-testers on sparc-solaris.
+
+* Make::Cache 1.011 2/11/2004
+
+****	Fixes for cpan-testers on sparc-solaris.
+
+* Make::Cache 1.010 2/10/2004
+
+**	obj_cache renamed to objcache, and OBJ_CACHE_* environment
+	variables becomes OBJCACHE*. This makes the variable naming
+	consistent, and prevents problems in enviornments where obj_* are
+	temporary files.
+
+***	Added objcache --jobs, and OBJCACHE_JOBS documentation.
+
+* Make::Cache 1.000 1/28/2004
+
+**	First public release
+
+----------------------------------------------------------------------
+$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
+----------------------------------------------------------------------
+
+This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
+
+Copyright 2003-2005 by Wilson Snyder.  This program is free software;
+you can redistribute it and/or modify it under the terms of either the GNU
+General Public License or the Perl Artistic License.
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	\f\n]*$"
+end:

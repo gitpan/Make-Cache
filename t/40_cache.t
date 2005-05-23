@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
-#$Revision: #5 $$Date: 2004/06/21 $$Author: ws150726 $
+#$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
-# Copyright 2002-2004 by Wilson Snyder.  This program is free software;
+# Copyright 2002-2005 by Wilson Snyder.  This program is free software;
 # you can redistribute it and/or modify it under the terms of either the GNU
 # General Public License or the Perl Artistic License.
 ######################################################################
@@ -26,8 +26,8 @@ our $Cache = Cwd::getcwd()."/test_dir/cache";
 mkpath $Cache, 0777;
 
 for (my $i=0; $i<2; $i++) {
-    gen_file("test_dir/test1.in", $i);
-    gen_file("test_dir/test1.out", $i);
+    gen_file2("test_dir/test1.in", $i);
+    gen_file2("test_dir/test1.out", $i);
 
     my $mc = Make::Cache->new (dir=>$Cache);
     ok(1);
@@ -53,7 +53,7 @@ for (my $i=0; $i<2; $i++) {
 }
 
 for (my $i=0; $i<2; $i++) {
-    gen_file("test_dir/test1.in", $i);
+    gen_file2("test_dir/test1.in", $i);
     unlink("test_dir/test1.out");
 
     my $mc = Make::Cache->new (dir=>$Cache);
@@ -79,7 +79,7 @@ if (0) {
 
 ######################################################################
 
-sub gen_file {
+sub gen_file2 {
     my $filename = shift;
     my $datum = shift;
 

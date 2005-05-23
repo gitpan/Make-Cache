@@ -1,7 +1,7 @@
-#$Revision: #15 $$Date: 2004/10/26 $$Author: ws150726 $
+#$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2004 by Wilson Snyder.
+# This program is Copyright 2002-2005 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -32,7 +32,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.013';
+our $VERSION = '1.020';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;
@@ -61,6 +61,7 @@ sub new {
 	 ok_include_regexps => [],
 	 edit_line_refs => {},
 	 nfs_wait => 4,	# Seconds to wait for targets to appear
+	 distcc => undef,
 	 @_,
 	 );
     bless $self, ref($class)||$class;
@@ -68,6 +69,8 @@ sub new {
 
 ######################################################################
 # Accessors
+
+sub distcc { return $_[0]->{distcc}; }
 
 sub temp_filename {
     my $self = shift;
@@ -204,10 +207,18 @@ sub execute {
     my @params = $self->compile_cmds;
 
     if ($host) {
-	# -n gets around blocking waiting for stdin when 'make' is in the background
-	# FIX: Note this will break if we ever objcache some make target that requires stdin!
-	unshift @params, ($ENV{OBJCACHE_RSH}||'rsh',
-			  '-n', $host, 'cd', Cwd::getcwd(), '&&', '/bin/nice', '-9',);
+	if ($self->distcc) {
+	    $ENV{DISTCC_HOSTS}   ||= join(' ',@{$self->{remote_hosts}});
+	    $ENV{DISTCC_SSH}     ||= ($ENV{OBJCACHE_RSH}||'rsh');
+	    $ENV{DISTCC_VERBOSE} ||= 1 if $Debug;
+	    unshift @params, ('distcc',);
+	} else {
+	    # -n gets around blocking waiting for stdin when 'make' is in the background
+	    # FIX: Note this will break if we ever objcache some make target that requires stdin!
+	    my $nice = (-f "/bin/nice") ? "/bin/nice" : "/usr/bin/nice";
+	    unshift @params, (split(' ',$ENV{OBJCACHE_RSH}||'rsh'),
+			      '-n', $host, 'cd', Cwd::getcwd(), '&&', $nice, '-9',);
+	}
     }
 
     my $runtime = $self->run(@params);
@@ -340,6 +351,7 @@ sub runtime_write {
 sub cc_running_lock {
     my $self = shift;
     return if !$self->{remote_hosts}[0];
+    return 1 if $self->distcc;  # Distcc will run jobs here too
     return if $self->host;  # We're running remotely, ignore lockfile
     # Write a file to indicate there is a cc running now.
     $Cc_Running_Lock = 1;
@@ -364,6 +376,7 @@ sub cc_running_unlock {
 sub is_cc_running_read {
     my $self = shift;
     return undef if !$self->{remote_hosts}[0];
+    return 1 if $self->distcc;  # Distcc will run jobs here too, so no one-running test or will overload local machine
     # Return true if CC is running now
     my @stat = stat(One_Compile_Filename);
     my $mtime = $stat[9];
@@ -375,6 +388,7 @@ sub host {
     if (!defined $self->{host}) {
 	# Pick a host to use
 	return undef if !$self->{remote_hosts}[0];
+	return "distcc" if $self->distcc;
 	return undef if $self->runtime && $self->{min_remote_runtime} && ($self->runtime < $self->{min_remote_runtime});
 	my $rnd = int(rand($#{$self->{remote_hosts}}+1));
 	$self->{host} = $self->{remote_hosts}[$rnd];
@@ -504,7 +518,7 @@ compile.
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2004 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2005 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

@@ -1,9 +1,12 @@
-   This is the Make::Cache Package.
+1 Make::Cache
+*************
 
-Copyright
-=========
+This is the Make::Cache Package.
 
-   This package is Copyright 2003-2004 by Wilson Snyder
+1.1 Copyright
+=============
+
+This package is Copyright 2003-2005 by Wilson Snyder
 <wsnyder@wsnyder.org>.
 
    This program is free software; you can redistribute it and/or modify
@@ -13,17 +16,17 @@ Artistic License.
    This code is provided with no warranty of any kind, and is used
 entirely at your own risk.
 
-Summary
-=======
+1.2 Summary
+===========
 
-   Make::Cache provides packages and the objcache program to cache the
+Make::Cache provides packages and the objcache program to cache the
 results of compiler runs, so that later identical source code can be
 recompiled instantaneously.
 
-Description
-===========
+1.3 Description
+===============
 
-   Make::Cache provides packages and programs to support caching of
+Make::Cache provides packages and programs to support caching of
 Makefile targets, mostly the outputs of compiler runs.
 
    The main interface is the objcache program.  By simply prepending
@@ -36,23 +39,23 @@ recompilation of source files.
    Objcache also allows for distributing parallel make jobs across
 multiple machines in a server farm.
 
-Obtaining Distribution
-======================
+1.4 Obtaining Distribution
+==========================
 
-   The latest version is available at `http://www.perl.org/CPAN/'
+The latest version is available at `http://www.perl.org/CPAN/'
 
-Supported Systems
-=================
+1.5 Supported Systems
+=====================
 
-   This version of Make::Cache has been built and tested on:
+This version of Make::Cache has been built and tested on:
 
    * i386-linux
 
    It should run on any system with Perl and GCC.  It may be easily
 modified to support other compilers.
 
-Installation
-============
+1.6 Installation
+================
 
   1. `cd' to the directory containing this README notice.
 

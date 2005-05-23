@@ -1,7 +1,7 @@
-#$Revision: #13 $$Date: 2004/10/26 $$Author: ws150726 $
+#$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2004 by Wilson Snyder.
+# This program is Copyright 2002-2005 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.013';
+our $VERSION = '1.020';
 
 ######################################################################
 #### Creators
@@ -664,7 +664,7 @@ local compile area.
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2004 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2005 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

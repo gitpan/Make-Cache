@@ -1,4 +1,4 @@
-# $Revision: #4 $$Date: 2004/07/22 $$Author: ws150726 $
+# $Revision: 1370 $$Date: 2005-03-31 11:14:58 -0500 (Thu, 31 Mar 2005) $$Author: wsnyder $
 #DESCRIPTION: Perl ExtUtils: Common routines required by package tests
 
 use IO::File;
@@ -61,6 +61,16 @@ sub files_identical {
 	}
     }
     return 1;
+}
+
+sub gen_file {
+    my $filename = shift;
+    my $datum = shift;
+
+    my $fh = IO::File->new($filename,"w") or die;
+    print $fh "extern int i; int i = $datum;\n";
+    print $fh "// This is ignored: ",rand(),"\n";
+    $fh->close();
 }
 
 1;

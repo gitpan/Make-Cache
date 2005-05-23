@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
-#$Revision: #5 $$Date: 2004/06/21 $$Author: ws150726 $
+#$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
-# Copyright 2002-2004 by Wilson Snyder.  This program is free software;
+# Copyright 2002-2005 by Wilson Snyder.  This program is free software;
 # you can redistribute it and/or modify it under the terms of either the GNU
 # General Public License or the Perl Artistic License.
 ######################################################################
@@ -61,16 +61,4 @@ for (my $i=0; $i<2; $i++) {
     my $oc_out = run_qx("$ObjCache --jobs");
     ok($oc_out);
     ok($oc_out =~ /^3/);
-}
-
-######################################################################
-
-sub gen_file {
-    my $filename = shift;
-    my $datum = shift;
-
-    my $fh = IO::File->new($filename,"w") or die;
-    print $fh "extern int i; int i = $datum;\n";
-    print $fh "// This is ignored: ",rand(),"\n";
-    $fh->close();
 }
