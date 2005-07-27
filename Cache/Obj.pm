@@ -1,4 +1,4 @@
-#$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
+#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2005 by Wilson Snyder.
@@ -32,7 +32,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.020';
+our $VERSION = '1.030';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;
@@ -62,6 +62,7 @@ sub new {
 	 edit_line_refs => {},
 	 nfs_wait => 4,	# Seconds to wait for targets to appear
 	 distcc => undef,
+	 icecream => undef,
 	 @_,
 	 );
     bless $self, ref($class)||$class;
@@ -71,6 +72,8 @@ sub new {
 # Accessors
 
 sub distcc { return $_[0]->{distcc}; }
+
+sub icecream { return $_[0]->{icecream}; }
 
 sub temp_filename {
     my $self = shift;
@@ -143,7 +146,7 @@ sub _preproc_hash {
 	my $origfile = $wholefile;
 	while (my ($key,$val) = each %{$self->{edit_line_refs}}) {
 	    print "Replace $key $val\n" if $Debug;
-	    $wholefile =~ s!^(\#line\s+\d+\s+) \"${key} ([^\"]+) \" (.*$ )  !$1\"${val}$2\"$3!mgx;
+	    $wholefile =~ s!^(\#l?i?n?e?\s+\d+\s+) \"${key} ([^\"]+) \" (.*$ )  !$1\"${val}$2\"$3!mgx;
         }
 	if ($origfile ne $wholefile) {
 	    print "Write ".$self->temp_filename."\n" if $Debug;
@@ -201,7 +204,7 @@ sub execute {
     my $self = shift;
     # Execute the commands under a subshell
 
-    $self->cc_running_lock();
+    $self->cc_running_lock() if !$self->icecream;
 
     my $host = $self->host;
     my @params = $self->compile_cmds;
@@ -212,7 +215,15 @@ sub execute {
 	    $ENV{DISTCC_SSH}     ||= ($ENV{OBJCACHE_RSH}||'rsh');
 	    $ENV{DISTCC_VERBOSE} ||= 1 if $Debug;
 	    unshift @params, ('distcc',);
-	} else {
+	}
+	elsif ($self->icecream) {
+	    my $cc = shift @params;
+	    $ENV{ICECC_DEBUG}    ||= 'debug' if $Debug;
+	    $ENV{ICECC_CC}       ||= $cc;
+	    $ENV{ICECC_CXX}      ||= $cc;
+	    unshift @params, "/opt/icecream/bin/$cc";
+	}
+	else {
 	    # -n gets around blocking waiting for stdin when 'make' is in the background
 	    # FIX: Note this will break if we ever objcache some make target that requires stdin!
 	    my $nice = (-f "/bin/nice") ? "/bin/nice" : "/usr/bin/nice";
@@ -326,7 +337,7 @@ sub runtime {
 	$self->{runtime} = $setit;
 	$self->{_runtime_cached} = 1;
     } elsif (!$self->{runtime} && !$self->{_runtime_cached}) {
-	my $rt = Make::Cache::Runtime::read(key=>$self->tgts_name_digest);
+	my $rt = Make::Cache::Runtime::read(key=>$self->runtime_key_digest);
 	$self->{runtime} = $rt && $rt->{runtime};
 	$self->{_runtime_cached} = 1;
     }
@@ -337,8 +348,8 @@ sub runtime_write {
     my $self = shift;
     # Update the runtime database
     return if !$self->{runtime};
-    Make::Cache::Runtime::write(key=>$self->tgts_name_digest,
-			 persist=>{ key=>$self->tgts_name_digest,
+    Make::Cache::Runtime::write(key=>$self->runtime_key_digest,
+			 persist=>{ key=>$self->runtime_key_digest,
 				    #prog=>'objcache',  #smaller-> more likely to fit in directories
 				    runtime=>$self->{runtime}, },
 			 );
@@ -352,6 +363,7 @@ sub cc_running_lock {
     my $self = shift;
     return if !$self->{remote_hosts}[0];
     return 1 if $self->distcc;  # Distcc will run jobs here too
+    return 1 if $self->icecream;  # Icecream will run jobs here too
     return if $self->host;  # We're running remotely, ignore lockfile
     # Write a file to indicate there is a cc running now.
     $Cc_Running_Lock = 1;
@@ -377,6 +389,7 @@ sub is_cc_running_read {
     my $self = shift;
     return undef if !$self->{remote_hosts}[0];
     return 1 if $self->distcc;  # Distcc will run jobs here too, so no one-running test or will overload local machine
+    return 1 if $self->icecream;  # Icecream will run jobs here too, so no one-running test or will overload local machine
     # Return true if CC is running now
     my @stat = stat(One_Compile_Filename);
     my $mtime = $stat[9];
@@ -387,12 +400,13 @@ sub host {
     my $self = shift;
     if (!defined $self->{host}) {
 	# Pick a host to use
+	return "icecream" if $self->icecream; # Doesn't need remote_hosts
 	return undef if !$self->{remote_hosts}[0];
-	return "distcc" if $self->distcc;
+	return "distcc" if $self->distcc; # Needs remote_hosts
 	return undef if $self->runtime && $self->{min_remote_runtime} && ($self->runtime < $self->{min_remote_runtime});
 	my $rnd = int(rand($#{$self->{remote_hosts}}+1));
 	$self->{host} = $self->{remote_hosts}[$rnd];
-	$self->{host} = 0 if $self->{host} eq $Hostname;	# No need to remote it
+	$self->{host} = 0 if $self->{host} eq $Hostname || $self->{host} eq 'localhost';	# No need to remote it
     }
     return $self->{host};
 }

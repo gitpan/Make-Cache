@@ -1,6 +1,6 @@
 # http://module-build.sourceforge.net/META-spec.html
 name:         Make-Cache
-version:      1.020
+version:      1.030
 version_from: Cache.pm
 license:      perl
 installdirs:  site

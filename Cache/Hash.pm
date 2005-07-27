@@ -1,4 +1,4 @@
-#$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
+#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2005 by Wilson Snyder.
@@ -22,7 +22,7 @@ use Carp;
 use strict;
 use vars qw ($Debug);
 
-our $VERSION = '1.020';
+our $VERSION = '1.030';
 
 #######################################################################
 

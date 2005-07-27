@@ -1,4 +1,4 @@
-#$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
+#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2005 by Wilson Snyder.
@@ -25,7 +25,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache::Obj);
 *Debug = \$Make::Cache::Obj::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.020';
+our $VERSION = '1.030';
 
 #######################################################################
 ## Methods that superclasses are likely to override
@@ -65,6 +65,7 @@ sub parse_cmds {
     $self->{use_preproc_output} = 1 unless $ccType eq "ghs";
 
     my $cmd = shift @params;
+    $self->{cmds_exec} = $cmd;		# Compiler executable name
     $self->flags_lcl($cmd);
     $self->{cmds_lcl_cpp_run} = [$cmd];	# Commands for preprocessor
     $self->{cmds_lcl_cex_run} = [$cmd];	# Commands for compiler
@@ -73,7 +74,8 @@ sub parse_cmds {
 	if ($sw =~ /^-/) {
 	    $lastsw = $sw;
 	    $dbo=1 if ($sw eq "-G" || $sw eq "-g") && $ccType eq "ghs";
-	    if ($sw ne "-o") {
+	    if ($sw ne "-o"	# Args for compile only, no cpp
+		&& $sw ne "-v") {
 		push @{$self->{cmds_lcl_cpp_run}}, $sw;
 	    }
 	    if ($sw ne "-o"
@@ -87,6 +89,12 @@ sub parse_cmds {
 	} elsif ($lastsw eq "-o") {
 	    push @tgtfiles, $sw;
 	    $self->flags_lcl($sw);
+	    $lastsw = '';
+	} elsif ($lastsw eq "-x") {  # Arguments to pass through to both stages
+	    push @{$self->{cmds_lcl_cpp_run}}, $sw;
+	    push @{$self->{cmds_lcl_cex_run}}, $sw;
+	    $self->flags_lcl($sw);
+	    $lastsw = '';
 	} else {
 	    push @srcfiles, $sw;
 	    push @{$self->{cmds_lcl_cpp_run}}, $sw;

@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
+#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2005 by Wilson Snyder.
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.020';
+our $VERSION = '1.030';
 
 #======================================================================
 
@@ -60,6 +60,7 @@ my $opt_clean;
 our $opt_distcc;
 my $opt_dump;
 our $opt_dump_rm;
+our $opt_icecream;
 our $opt_jobs;
 our $Opt_Write = 0;
 our @Opt_Okdir;
@@ -74,6 +75,7 @@ if (!GetOptions (
 		 "distcc!"	=> \$opt_distcc,
 		 "dump!"	=> \$opt_dump,
 		 "dumprm!"	=> \$opt_dump_rm,
+		 "icecream!"	=> \$opt_icecream,
 		 "jobs:s"	=> \$opt_jobs,
 		 "okdir=s"	=> sub {shift; push @Opt_Okdir, shift;},
 		 "read!"	=> \$Opt_Read,
@@ -120,6 +122,7 @@ my @ocparam = (dir=>$Cache_Dir,
 	       edit_line_refs => {},
 	       ok_include_regexps => [],
 	       distcc => $opt_distcc,
+	       icecream => $opt_icecream,
 	       file_env => [ # Hash of global mnemonic and local value for global_filename funcs
 			     PWD => Cwd::getcwd(),
 			     PWD => ($ENV{PWD}||Cwd::getcwd()),
@@ -186,7 +189,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $ ', "\n";
+    print '$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $ ', "\n";
     $SIG{__WARN__} = sub{};	#pod2text isn't clean.
     pod2text($0);
     exit (1);
@@ -290,6 +293,11 @@ Remove any files older then one day from the cache.
 =item --distcc
 
 Use the distcc program to distribute compile jobs, rather then logging in
+remotely and executing the compilation command.
+
+=item --icecream
+
+Use the icecream program to distribute compile jobs, rather then logging in
 remotely and executing the compilation command.
 
 =item --dump

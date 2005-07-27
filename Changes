@@ -2,6 +2,14 @@ Revision history for Perl extension Make::Cache
 
 The contributors that suggested a given feature are shown in [].
 	
+* Make::Cache 1.030 7/27/2005
+
+***	With --icecream, use icecream instead of logging in remotely.
+
+***	Runtimes now stored separately for each compiler.
+
+****	Support g++ -x option.
+
 * Make::Cache 1.020 5/23/2005
 
 ***	With --distcc, use distcc instead of logging in remotely.
@@ -34,7 +42,7 @@ The contributors that suggested a given feature are shown in [].
 **	First public release
 
 ----------------------------------------------------------------------
-$Revision: 2222 $$Date: 2005-05-23 11:01:14 -0400 (Mon, 23 May 2005) $$Author: wsnyder $
+$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
 ----------------------------------------------------------------------
 
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
