@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
-#$Revision: 490 $$Date: 2005-05-26 15:49:12 -0400 (Thu, 26 May 2005) $$Author: wsnyder $
+#$Id: 95_distcc.t 14521 2006-02-21 18:52:32Z wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
-# Copyright 2002-2005 by Wilson Snyder.  This program is free software;
+# Copyright 2002-2006 by Wilson Snyder.  This program is free software;
 # you can redistribute it and/or modify it under the terms of either the GNU
 # General Public License or the Perl Artistic License.
 ######################################################################

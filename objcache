@@ -1,8 +1,8 @@
 #!/usr/bin/perl -w
-#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
+#$Id: objcache 14521 2006-02-21 18:52:32Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2005 by Wilson Snyder.
+# This program is Copyright 2002-2006 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.030';
+our $VERSION = '1.040';
 
 #======================================================================
 
@@ -62,6 +62,7 @@ my $opt_dump;
 our $opt_dump_rm;
 our $opt_icecream;
 our $opt_jobs;
+our $opt_link;
 our $Opt_Write = 0;
 our @Opt_Okdir;
 
@@ -76,6 +77,7 @@ if (!GetOptions (
 		 "dump!"	=> \$opt_dump,
 		 "dumprm!"	=> \$opt_dump_rm,
 		 "icecream!"	=> \$opt_icecream,
+		 "link!"	=> \$opt_link,
 		 "jobs:s"	=> \$opt_jobs,
 		 "okdir=s"	=> sub {shift; push @Opt_Okdir, shift;},
 		 "read!"	=> \$Opt_Read,
@@ -123,6 +125,7 @@ my @ocparam = (dir=>$Cache_Dir,
 	       ok_include_regexps => [],
 	       distcc => $opt_distcc,
 	       icecream => $opt_icecream,
+	       link => $opt_link,
 	       file_env => [ # Hash of global mnemonic and local value for global_filename funcs
 			     PWD => Cwd::getcwd(),
 			     PWD => ($ENV{PWD}||Cwd::getcwd()),
@@ -189,7 +192,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $ ', "\n";
+    print '$Id: objcache 14521 2006-02-21 18:52:32Z wsnyder $ ', "\n";
     $SIG{__WARN__} = sub{};	#pod2text isn't clean.
     pod2text($0);
     exit (1);
@@ -231,7 +234,7 @@ objcache is called with a full g++ or cxppc command line.  It acts as if
 the compiler is called directly with all arguments.
 
 With --read and --write, objcache returns almost instantly when the same
-source is recompled.  It does this by caching a hash of the preprocessed
+source is recompiled.  It does this by caching a hash of the preprocessed
 gcc source files.  If gcc is invoked with the same inputs, the cache
 returns the object files without needing to invoke the compiler.
 
@@ -316,6 +319,13 @@ is the contents of the OBJCACHE_JOBS variable, or if not set, a count of
 the number of hosts listed in the OBJCACHE_HOSTS variable.  With a
 argument, use the argument instead of the OBJCACHE_HOSTS variable.
 
+=item --link
+
+When a object file hits, create a symlink to the master version, rather
+then copying.  This may result in better performance when there is a single
+user, though worse performance when builds are local and the repository on
+a global disk.
+
 =item --okdir
 
 Specify a directory that should avoid the strange directory warning.  Use
@@ -346,8 +356,9 @@ Write the cache with compiled objects.
 Specifies the directory containing the cache.  Defaults to
 /usr/local/common/lib/objcache.  Under this is a directory based on a hash
 of the target name.  Under that is a directory based on a hash of the
-source file and compile switches.  Then finally .digest and .t# directory
-entries for each hash and target file.
+source file and compile switches, then finally .digest and .t# directory
+entries for each hash and target file.  You can remove all of the files
+in this directory to empty the cache.
 
 =item OBJCACHE_RUNTIME_DIR
 
@@ -356,7 +367,7 @@ Specifies the directory containing the runtime database.  Defaults to
 
 =item OBJCACHE_HOSTS
 
-Specifies a comma seperated list of hosts to run compiles on.  When a
+Specifies a comma separated list of hosts to run compiles on.  When a
 compile needs to be run, objcache will pick a random host from this list,
 then remote shell to run the compile.  This allows a "make -j" run to use
 many machines in parallel.  Defaults to not remote shell.
@@ -382,7 +393,7 @@ Specifies the program name to use for remote shells.  Defaults to rsh.
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2005 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2006 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

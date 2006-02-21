@@ -2,6 +2,12 @@ Revision history for Perl extension Make::Cache
 
 The contributors that suggested a given feature are shown in [].
 	
+* Make::Cache 1.040 2/21/2006
+
+**	By default, copy object files unless passed new --link flag.
+	This results in better performance when builds are on
+	local disks, and the global directory on network disks.
+
 * Make::Cache 1.030 7/27/2005
 
 ***	With --icecream, use icecream instead of logging in remotely.
@@ -32,7 +38,7 @@ The contributors that suggested a given feature are shown in [].
 
 **	obj_cache renamed to objcache, and OBJ_CACHE_* environment
 	variables becomes OBJCACHE*. This makes the variable naming
-	consistent, and prevents problems in enviornments where obj_* are
+	consistent, and prevents problems in environments where obj_* are
 	temporary files.
 
 ***	Added objcache --jobs, and OBJCACHE_JOBS documentation.
@@ -42,12 +48,12 @@ The contributors that suggested a given feature are shown in [].
 **	First public release
 
 ----------------------------------------------------------------------
-$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
+$Id: Changes 14521 2006-02-21 18:52:32Z wsnyder $
 ----------------------------------------------------------------------
 
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 
-Copyright 2003-2005 by Wilson Snyder.  This program is free software;
+Copyright 2003-2006 by Wilson Snyder.  This program is free software;
 you can redistribute it and/or modify it under the terms of either the GNU
 General Public License or the Perl Artistic License.
 

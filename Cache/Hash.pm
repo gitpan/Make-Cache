@@ -1,7 +1,7 @@
-#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
+#$Id: Hash.pm 14521 2006-02-21 18:52:32Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2005 by Wilson Snyder.
+# This program is Copyright 2002-2006 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -22,7 +22,7 @@ use Carp;
 use strict;
 use vars qw ($Debug);
 
-our $VERSION = '1.030';
+our $VERSION = '1.040';
 
 #######################################################################
 
@@ -248,7 +248,7 @@ If any does not exist, return undef.
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2005 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2006 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

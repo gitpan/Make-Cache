@@ -1,5 +1,9 @@
-# $Revision: 1370 $$Date: 2005-03-31 11:14:58 -0500 (Thu, 31 Mar 2005) $$Author: wsnyder $
-#DESCRIPTION: Perl ExtUtils: Common routines required by package tests
+# $Id: test_utils.pl 14521 2006-02-21 18:52:32Z wsnyder $
+# DESCRIPTION: Perl ExtUtils: Common routines required by package tests
+#
+# Copyright 2000-2006 by Wilson Snyder.  This program is free software;
+# you can redistribute it and/or modify it under the terms of either the GNU
+# General Public License or the Perl Artistic License.
 
 use IO::File;
 use vars qw($PERL $GCC);

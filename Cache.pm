@@ -1,7 +1,7 @@
-#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
+#$Id: Cache.pm 14521 2006-02-21 18:52:32Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2005 by Wilson Snyder.
+# This program is Copyright 2002-2006 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.030';
+our $VERSION = '1.040';
 
 ######################################################################
 #### Creators
@@ -259,9 +259,14 @@ sub restore {
 	my $from = "$pathfile.t${n}";
 	if (!-r $from) { $missing=$from; last; }
 	# Can't hard link, as might be on different file system
-	print "    ln -s $from $tgt\n" if $Debug;
 	unlink $tgt;
-	symlink $from, $tgt or die "objcache: %Error: Can't ln -s $from $tgt: $!\n";
+	if ($self->{link}) {
+	    print "    ln -s $from $tgt\n" if $Debug;
+	    symlink $from, $tgt or die "objcache: %Error: Can't ln -s $from $tgt: $!\n";
+	} else {
+	    print "    cp $from $tgt\n" if $Debug;
+	    copy $from, $tgt or die "objcache: %Error: Can't cp $from $tgt: $!\n";
+	}
 	touch($tgt);
     }
 
@@ -671,7 +676,7 @@ local compile area.
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2005 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2006 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

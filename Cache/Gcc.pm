@@ -1,7 +1,7 @@
-#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
+#$Id: Gcc.pm 14521 2006-02-21 18:52:32Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2005 by Wilson Snyder.
+# This program is Copyright 2002-2006 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -25,7 +25,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache::Obj);
 *Debug = \$Make::Cache::Obj::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.030';
+our $VERSION = '1.040';
 
 #######################################################################
 ## Methods that superclasses are likely to override
@@ -119,7 +119,7 @@ sub parse_cmds {
 	($src =~ /\.(c|cc|cpp)$/)
 	    or die "objcache: %Error: Strange source filename: $src: $wholeParams\n";
 	# Multiple targets aren't cached properly, because we'd need to
-	# preprocess each source file seperately, then pass them all onto gcc.
+	# preprocess each source file separately, then pass them all onto gcc.
 	# Otherwise, they'd just get concatenated which isn't the same thing
 	# with #defines, or with local static's of the same name.
 	(++$num_tgts == 1)
@@ -193,7 +193,7 @@ See L<Make::Cache::Obj>
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2005 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2006 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

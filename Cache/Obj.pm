@@ -1,7 +1,7 @@
-#$Revision: 4089 $$Date: 2005-07-27 09:55:32 -0400 (Wed, 27 Jul 2005) $$Author: wsnyder $
+#$Id: Obj.pm 14521 2006-02-21 18:52:32Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2005 by Wilson Snyder.
+# This program is Copyright 2002-2006 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -32,7 +32,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.030';
+our $VERSION = '1.040';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;
@@ -60,7 +60,7 @@ sub new {
 	 temp_filename => undef,
 	 ok_include_regexps => [],
 	 edit_line_refs => {},
-	 nfs_wait => 4,	# Seconds to wait for targets to appear
+	 nfs_wait => 5,	# Seconds to wait for targets to appear
 	 distcc => undef,
 	 icecream => undef,
 	 @_,
@@ -250,7 +250,7 @@ sub execute {
 
 sub compile_cmds {
     my $self = shift;
-    # Return the commands needed to generate the targets.  This may be overriden by superclasses.
+    # Return the commands needed to generate the targets.  This may be overridden by superclasses.
     return ($self->cmds_lcl);
 }
 
@@ -532,7 +532,7 @@ compile.
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2005 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2006 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 
