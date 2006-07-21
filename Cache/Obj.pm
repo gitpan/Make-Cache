@@ -1,4 +1,4 @@
-#$Id: Obj.pm 14521 2006-02-21 18:52:32Z wsnyder $
+#$Id: Obj.pm 23324 2006-07-21 13:35:50Z wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2006 by Wilson Snyder.
@@ -32,7 +32,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.040';
+our $VERSION = '1.041';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;

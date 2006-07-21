@@ -19,4 +19,6 @@ t/50_gcc.t
 t/90_objcache.t
 t/95_distcc.t
 t/96_icecream.t
+t/97_purify.t
+t/fake_purify
 t/test_utils.pl

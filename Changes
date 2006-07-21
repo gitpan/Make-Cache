@@ -2,6 +2,12 @@ Revision history for Perl extension Make::Cache
 
 The contributors that suggested a given feature are shown in [].
 	
+* Make::Cache 1.041 7/27/2006
+
+***	With -gcc option, parse any compiler program as if GCC.
+
+****	With -wrapper option, support purify, etc. in front of compiler name.
+
 * Make::Cache 1.040 2/21/2006
 
 **	By default, copy object files unless passed new --link flag.
@@ -48,7 +54,8 @@ The contributors that suggested a given feature are shown in [].
 **	First public release
 
 ----------------------------------------------------------------------
-$Id: Changes 14521 2006-02-21 18:52:32Z wsnyder $
+$Id: Changes 23324 2006-07-21 13:35:50Z wsnyder $
+DESCRIPTION: Documentation on change history for this package
 ----------------------------------------------------------------------
 
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].

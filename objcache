@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#$Id: objcache 14521 2006-02-21 18:52:32Z wsnyder $
+#$Id: objcache 23324 2006-07-21 13:35:50Z wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2006 by Wilson Snyder.
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.040';
+our $VERSION = '1.041';
 
 #======================================================================
 
@@ -63,6 +63,8 @@ our $opt_dump_rm;
 our $opt_icecream;
 our $opt_jobs;
 our $opt_link;
+our $opt_gcc;
+our $opt_wrapper;
 our $Opt_Write = 0;
 our @Opt_Okdir;
 
@@ -76,11 +78,13 @@ if (!GetOptions (
 		 "distcc!"	=> \$opt_distcc,
 		 "dump!"	=> \$opt_dump,
 		 "dumprm!"	=> \$opt_dump_rm,
+		 "gcc!"		=> \$opt_gcc,
 		 "icecream!"	=> \$opt_icecream,
 		 "link!"	=> \$opt_link,
 		 "jobs:s"	=> \$opt_jobs,
 		 "okdir=s"	=> sub {shift; push @Opt_Okdir, shift;},
 		 "read!"	=> \$Opt_Read,
+		 "wrapper!"	=> \$opt_wrapper,
 		 "write!"	=> \$Opt_Write,
 		 # Program and it's parameters
 		 "<>"		=> \&parameter,
@@ -125,7 +129,9 @@ my @ocparam = (dir=>$Cache_Dir,
 	       ok_include_regexps => [],
 	       distcc => $opt_distcc,
 	       icecream => $opt_icecream,
+	       force_gcc => $opt_gcc,
 	       link => $opt_link,
+	       wrapper => $opt_wrapper,
 	       file_env => [ # Hash of global mnemonic and local value for global_filename funcs
 			     PWD => Cwd::getcwd(),
 			     PWD => ($ENV{PWD}||Cwd::getcwd()),
@@ -192,7 +198,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Id: objcache 14521 2006-02-21 18:52:32Z wsnyder $ ', "\n";
+    print '$Id: objcache 23324 2006-07-21 13:35:50Z wsnyder $ ', "\n";
     $SIG{__WARN__} = sub{};	#pod2text isn't clean.
     pod2text($0);
     exit (1);
@@ -298,10 +304,10 @@ Remove any files older then one day from the cache.
 Use the distcc program to distribute compile jobs, rather then logging in
 remotely and executing the compilation command.
 
-=item --icecream
+=item --gcc
 
-Use the icecream program to distribute compile jobs, rather then logging in
-remotely and executing the compilation command.
+Ignore the compiler name specified on the command line, and assume the
+compiler has the same command line options as GCC.
 
 =item --dump
 
@@ -311,6 +317,11 @@ For debugging, show the state of the cache.
 
 Show the state of the cache, with the command line command needed to flush
 that entry.
+
+=item --icecream
+
+Use the icecream program to distribute compile jobs, rather then logging in
+remotely and executing the compilation command.
 
 =item --jobs
 
@@ -340,6 +351,12 @@ Read the cache and use cached objects if they exist.
 
 Disable caching the execution time of the compile, nor show the runtime
 when compling.
+
+=item --wrapper
+
+Interpret the first program on the command line as a wrapper script, and
+get the real compiler name from the next non-switch argument.  Useful for
+applications like purify.
 
 =item --write
 

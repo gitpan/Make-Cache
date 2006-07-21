@@ -1,4 +1,4 @@
-#$Id: Gcc.pm 14521 2006-02-21 18:52:32Z wsnyder $
+#$Id: Gcc.pm 23324 2006-07-21 13:35:50Z wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2006 by Wilson Snyder.
@@ -25,7 +25,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache::Obj);
 *Debug = \$Make::Cache::Obj::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.040';
+our $VERSION = '1.041';
 
 #######################################################################
 ## Methods that superclasses are likely to override
@@ -34,6 +34,7 @@ sub is_legal_cmd {
     my $self = shift;
     my @cmds = @_;
     (my $prog = $cmds[0]) =~ s!.*/!!;
+    return "gnu" if $self->{force_gcc};
     return "gnu" if ($prog =~ /^g\+\+/ || $prog =~ /^gcc/);
     return "ghs" if ($prog eq "cxppc");
     return undef;
@@ -51,6 +52,32 @@ sub parse_cmds {
 
     my $wholeParams = join(' ',@params);
     $params[0] or die "objcache: %Error: Not passed any program on command line\n";
+
+    if ($self->{wrapper}) {
+	# Add wrapper to execution
+	{
+	    my $sw = $params[0];
+	    shift @params;
+	    push @{$self->{cmds_lcl_cpp_run}}, $sw;
+	    push @{$self->{cmds_lcl_cex_run}}, $sw;
+	    $self->flags_lcl($sw);  # Hash it too
+	}
+	# Skip arguments up to next wrapper
+	while (1) {
+	    my $sw = $params[0];
+	    if ($sw =~ /^-/) {
+		push @{$self->{cmds_lcl_cpp_run}}, $sw;
+		push @{$self->{cmds_lcl_cex_run}}, $sw;
+		$self->flags_lcl($sw);  # Hash it too
+		shift @params;  # Drop switched argument
+	    } if (!defined $sw) {
+		die "objcache: %Error: Not passed any program on command line after wrapper name\n";
+	    } else {
+		last;
+	    }
+	}
+    }
+
     my $ccType = $self->is_legal_cmd(@params)
 	or die "objcache: %Error: Unknown program $params[0] (Or use --help)\n";
 
