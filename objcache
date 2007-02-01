@@ -1,8 +1,8 @@
 #!/usr/bin/perl -w
-#$Id: objcache 23324 2006-07-21 13:35:50Z wsnyder $
+#$Id: objcache 31185 2007-02-01 14:40:37Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2006 by Wilson Snyder.
+# This program is Copyright 2002-2007 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.041';
+our $VERSION = '1.042';
 
 #======================================================================
 
@@ -185,6 +185,7 @@ if ($Opt_Write) {
 } else {
     $ochunt->runtime_write;
 }
+#print "      Compiling $srcfile took ".Make::Cache::Runtime::format_time($ochunt->runtime)."\n" if $Opt_Loud;
 
 if ($Debug && $Opt_Read && $Opt_Write) {
     $ochunt->clear_hash_cache;
@@ -198,7 +199,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Id: objcache 23324 2006-07-21 13:35:50Z wsnyder $ ', "\n";
+    print '$Id: objcache 31185 2007-02-01 14:40:37Z wsnyder $ ', "\n";
     $SIG{__WARN__} = sub{};	#pod2text isn't clean.
     pod2text($0);
     exit (1);
@@ -410,7 +411,7 @@ Specifies the program name to use for remote shells.  Defaults to rsh.
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2006 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

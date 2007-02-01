@@ -1,7 +1,7 @@
-#$Id: Cache.pm 23324 2006-07-21 13:35:50Z wsnyder $
+#$Id: Cache.pm 31185 2007-02-01 14:40:37Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2006 by Wilson Snyder.
+# This program is Copyright 2002-2007 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.041';
+our $VERSION = '1.042';
 
 ######################################################################
 #### Creators
@@ -676,7 +676,7 @@ local compile area.
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2006 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

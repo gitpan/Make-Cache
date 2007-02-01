@@ -1,7 +1,7 @@
-#$Id: Runtime.pm 23324 2006-07-21 13:35:50Z wsnyder $
+#$Id: Runtime.pm 31185 2007-02-01 14:40:37Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2006 by Wilson Snyder.
+# This program is Copyright 2002-2007 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
@@ -25,7 +25,7 @@ use Carp;
 
 use strict;
 
-our $VERSION = '1.041';
+our $VERSION = '1.042';
 
 #######################################################################
 
@@ -65,10 +65,11 @@ sub write {
     mkpath ($path, 0, 0777);
     my $filename = "$path/${key_digest}.runtime";
     print "Make::Cache::Runtime::write $filename\n" if $::Debug;
-    Storable::nstore ($params{persist}, "${filename}.new");
-    chmod 0777, "${filename}.new";
+    my $newfile = "${filename}.new$$";
+    Storable::nstore ($params{persist}, $newfile);
+    chmod 0777, $newfile;
     # Do the copy as one atomic op to prevent a race case with another reader
-    move ("${filename}.new", "$filename");
+    move ($newfile, "$filename");
 }
 
 sub read {
@@ -80,8 +81,13 @@ sub read {
     my $key_digest = Digest::MD5::md5_hex($params{key});
     (my $key_prefix = $key_digest) =~ s/^(..).*$/$1/;
     my $filename = "$params{dir}/${key_prefix}/${key_digest}.runtime";
-    return undef if ! -r $filename;
-    my $persistref = Storable::retrieve($filename);
+
+    # We can't have storable open the file for us, as there may be a race
+    # where the file exists with -r, then gets replaced.
+    my $fd = IO::File->new("<$filename");
+    return undef if !$fd;
+    my $persistref;
+    eval { $persistref = Storable::fd_retrieve($fd); };  # Ignore errors
     return $persistref;
 }
 
@@ -191,7 +197,7 @@ Specifies the directory containing the runtime database.  Defaults to
 
 The latest version is available from CPAN and from L<http://www.veripool.com/>.
 
-Copyright 2000-2006 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

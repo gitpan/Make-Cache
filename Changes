@@ -2,6 +2,11 @@ Revision history for Perl extension Make::Cache
 
 The contributors that suggested a given feature are shown in [].
 	
+* Make::Cache 1.042 2/1/2007
+
+****	Fix Storable error when another process creates runtime
+	file simultaneously with our reading it. [Oleg Petlin]
+
 * Make::Cache 1.041 7/27/2006
 
 ***	With -gcc option, parse any compiler program as if GCC.
@@ -54,13 +59,13 @@ The contributors that suggested a given feature are shown in [].
 **	First public release
 
 ----------------------------------------------------------------------
-$Id: Changes 23324 2006-07-21 13:35:50Z wsnyder $
+$Id: Changes 31185 2007-02-01 14:40:37Z wsnyder $
 DESCRIPTION: Documentation on change history for this package
 ----------------------------------------------------------------------
 
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 
-Copyright 2003-2006 by Wilson Snyder.  This program is free software;
+Copyright 2003-2007 by Wilson Snyder.  This program is free software;
 you can redistribute it and/or modify it under the terms of either the GNU
 General Public License or the Perl Artistic License.
 
