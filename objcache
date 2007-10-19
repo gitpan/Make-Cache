@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#$Id: objcache 31185 2007-02-01 14:40:37Z wsnyder $
+#$Id: objcache 46153 2007-10-19 00:26:07Z wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2007 by Wilson Snyder.
@@ -25,7 +25,7 @@ use lib "$RealBin/blib/arch"; # For local testing
 use Getopt::Long;
 use IO::File;
 use IO::Pipe;
-use Pod::Text;
+use Pod::Usage;
 use File::Copy;
 use POSIX qw(:sys_wait_h);
 
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.042';
+our $VERSION = '1.043';
 
 #======================================================================
 
@@ -89,7 +89,7 @@ if (!GetOptions (
 		 # Program and it's parameters
 		 "<>"		=> \&parameter,
 		 )) {
-    usage();
+    die "%Error: Bad usage, try 'objcache --help'\n";
 }
 # Read rest of command line
 push @params, @ARGV;
@@ -199,9 +199,8 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Id: objcache 31185 2007-02-01 14:40:37Z wsnyder $ ', "\n";
-    $SIG{__WARN__} = sub{};	#pod2text isn't clean.
-    pod2text($0);
+    print '$Id: objcache 46153 2007-10-19 00:26:07Z wsnyder $ ', "\n";
+    pod2usage(-verbose=>2, -exitval => 2);
     exit (1);
 }
 

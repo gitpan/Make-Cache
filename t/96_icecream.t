@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#$Id: 96_icecream.t 31185 2007-02-01 14:40:37Z wsnyder $
+#$Id: 96_icecream.t 37332 2007-04-24 21:10:01Z wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
@@ -22,6 +22,13 @@ chdir "test_dir";
 
 our $ObjCache = "$PERL ../objcache --read --write --icecream";  #--debug
 our $TestId = 96;
+
+if (!-d "/opt/icecream/bin") {
+    for (1..12) {
+	skip("icecream not installed (harmless)",1);
+    }
+    exit 0;
+}
 
 ######################################################################
 

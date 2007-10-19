@@ -2,6 +2,12 @@ Revision history for Perl extension Make::Cache
 
 The contributors that suggested a given feature are shown in [].
 	
+* Make::Cache 1.043 10/18/2007
+
+****	Fix --help to use Pod::Usage instead of depreciated pod2text.
+
+****	Fix test failure when icecream not installed. [cpan-testers]
+
 * Make::Cache 1.042 2/1/2007
 
 ****	Fix Storable error when another process creates runtime
@@ -59,7 +65,7 @@ The contributors that suggested a given feature are shown in [].
 **	First public release
 
 ----------------------------------------------------------------------
-$Id: Changes 31185 2007-02-01 14:40:37Z wsnyder $
+$Id: Changes 46153 2007-10-19 00:26:07Z wsnyder $
 DESCRIPTION: Documentation on change history for this package
 ----------------------------------------------------------------------
 

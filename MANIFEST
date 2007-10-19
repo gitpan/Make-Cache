@@ -1,11 +1,12 @@
-Cache.pm
-Cache/Gcc.pm
-Cache/Hash.pm
-Cache/Obj.pm
-Cache/Runtime.pm
 Changes
+lib/Make/Cache.pm
+lib/Make/Cache/Gcc.pm
+lib/Make/Cache/Hash.pm
+lib/Make/Cache/Obj.pm
+lib/Make/Cache/Runtime.pm
 Makefile.PL
 MANIFEST
+MANIFEST.SKIP
 META.yml			Module meta-data (added by MakeMaker)
 objcache
 README

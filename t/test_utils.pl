@@ -1,4 +1,4 @@
-# $Id: test_utils.pl 31185 2007-02-01 14:40:37Z wsnyder $
+# $Id: test_utils.pl 37595 2007-04-27 18:43:15Z wsnyder $
 # DESCRIPTION: Perl ExtUtils: Common routines required by package tests
 #
 # Copyright 2000-2007 by Wilson Snyder.  This program is free software;
@@ -16,8 +16,7 @@ mkdir 'test_dir',0777;
 if (!$ENV{HARNESS_ACTIVE}) {
     use lib "blib/lib";
     use lib "blib/arch";
-    use lib "..";
-    use lib "../..";
+    use lib "lib";
 }
 
 sub run_system {

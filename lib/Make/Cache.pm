@@ -1,4 +1,4 @@
-#$Id: Cache.pm 31185 2007-02-01 14:40:37Z wsnyder $
+#$Id: Cache.pm 46153 2007-10-19 00:26:07Z wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2007 by Wilson Snyder.
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.042';
+our $VERSION = '1.043';
 
 ######################################################################
 #### Creators

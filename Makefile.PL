@@ -1,4 +1,4 @@
-# $Id: Makefile.PL 31185 2007-02-01 14:40:37Z wsnyder $
+# $Id: Makefile.PL 37595 2007-04-27 18:43:15Z wsnyder $
 # DESCRIPTION: Perl ExtUtils: Type 'perl Makefile.PL' to create a Makefile for this package
 #
 # Copyright 2001-2007 by Wilson Snyder.  This program is free software;
@@ -43,9 +43,10 @@ WriteMakefile(
 	      NAME      => 'Make::Cache',
 	      AUTHOR	=> 'Wilson Snyder <wsnyder@wsnyder.org>',
 	      ABSTRACT  => 'Caching of GCC objects and Make targets',
-	      VERSION_FROM  => 'Cache.pm',
+	      VERSION_FROM  => 'lib/Make/Cache.pm',
 	      NO_META	=> 1,
 	      PREREQ_PM => {'Digest::MD5' => 1,
+			    'Pod::Usage' => 0,
 			    'Storable' => 1,
 			},
 	      EXE_FILES => [qw( objcache )],

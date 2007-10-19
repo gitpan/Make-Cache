@@ -1,4 +1,4 @@
-#$Id: Runtime.pm 31185 2007-02-01 14:40:37Z wsnyder $
+#$Id: Runtime.pm 46153 2007-10-19 00:26:07Z wsnyder $
 ######################################################################
 #
 # This program is Copyright 2002-2007 by Wilson Snyder.
@@ -25,7 +25,7 @@ use Carp;
 
 use strict;
 
-our $VERSION = '1.042';
+our $VERSION = '1.043';
 
 #######################################################################
 
@@ -62,7 +62,9 @@ sub write {
     my $key_digest = Digest::MD5::md5_hex($params{key});
     (my $key_prefix = $key_digest) =~ s/^(..).*$/$1/;
     my $path = "$params{dir}/${key_prefix}";
-    mkpath ($path, 0, 0777);
+    # Ignore errors, as two processes may be doing this at once
+    # If the output dir isn't made the storable creation will catch it
+    eval { my_mkpath ($path); };
     my $filename = "$path/${key_digest}.runtime";
     print "Make::Cache::Runtime::write $filename\n" if $::Debug;
     my $newfile = "${filename}.new$$";
@@ -116,6 +118,37 @@ sub dump {
 	}
     }
     foreach (sort(keys %lines)) { print $lines{$_}; }
+}
+
+sub my_mkpath {
+    my($paths, $verbose, $mode) = @_;
+    # $paths   -- either a path string or ref to list of paths
+    # $verbose -- optional print "mkdir $path" for each directory created
+    # $mode    -- optional permissions, defaults to 0777
+    #
+    # Like File::Path::mkpath, where this is from.
+    # But that insists on printing messages and failing when it doesn't
+    # work, which can happen when many processes are executing in parallel
+    local($")="/";
+    $mode = 0777 unless defined($mode);
+    $paths = [$paths] unless ref $paths;
+    my (@created,$path);
+    foreach $path (@$paths) {
+	$path .= '/' if $^O eq 'os2' and $path =~ /^\w:\z/s; # feature of CRT 
+	next if -d $path;
+	my $parent = File::Basename::dirname($path);
+	unless (-d $parent or $path eq $parent) {
+	    push(@created,my_mkpath($parent, $verbose, $mode));
+ 	}
+	print "mkdir $path\n" if $verbose;
+	unless (mkdir($path,$mode)) {
+	    my $e = $!;
+	    # allow for another process to have created it meanwhile
+	    #croak "mkdir $path: $e" unless -d $path;
+	}
+	push(@created, $path);
+    }
+    @created;
 }
 
 #######################################################################
