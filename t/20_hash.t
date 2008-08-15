@@ -1,9 +1,8 @@
 #!/usr/bin/perl -w
-#$Id: 20_hash.t 31185 2007-02-01 14:40:37Z wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
-# Copyright 2002-2007 by Wilson Snyder.  This program is free software;
+# Copyright 2002-2008 by Wilson Snyder.  This program is free software;
 # you can redistribute it and/or modify it under the terms of either the GNU
 # General Public License or the Perl Artistic License.
 ######################################################################

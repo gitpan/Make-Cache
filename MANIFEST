@@ -1,3 +1,4 @@
+.gitignore
 Changes
 lib/Make/Cache.pm
 lib/Make/Cache/Gcc.pm
@@ -13,6 +14,7 @@ README
 readme.texi
 t/00_pod.t
 t/01_manifest.t
+t/02_help.t
 t/10_runtime.t
 t/20_hash.d
 t/20_hash.t

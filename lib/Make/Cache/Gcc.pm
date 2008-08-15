@@ -1,17 +1,17 @@
-#$Id: Gcc.pm 46153 2007-10-19 00:26:07Z wsnyder $
+#$Id: Gcc.pm 59180 2008-08-15 14:22:09Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2007 by Wilson Snyder.
+# This program is Copyright 2002-2008 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
 # Perl Artistic License.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#                                                                           
+#
 ######################################################################
 
 package Make::Cache::Gcc;
@@ -25,7 +25,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache::Obj);
 *Debug = \$Make::Cache::Obj::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.043';
+our $VERSION = '1.044';
 
 #######################################################################
 ## Methods that superclasses are likely to override
@@ -36,6 +36,7 @@ sub is_legal_cmd {
     (my $prog = $cmds[0]) =~ s!.*/!!;
     return "gnu" if $self->{force_gcc};
     return "gnu" if ($prog =~ /^g\+\+/ || $prog =~ /^gcc/);
+    return "gnu" if ($prog =~ /^pathCC/ || $prog =~ /^pathcc/);
     return "ghs" if ($prog eq "cxppc");
     return undef;
 }
@@ -47,7 +48,7 @@ sub parse_cmds {
     my $self = shift;
     # Parse the program and arguments.  Die if parsing trouble
     # Else, load self with necessary info
-    
+
     my @params = $self->cmds_lcl;
 
     my $wholeParams = join(' ',@params);
@@ -219,9 +220,9 @@ See L<Make::Cache::Obj>
 
 =head1 DISTRIBUTION
 
-The latest version is available from CPAN and from L<http://www.veripool.com/>.
+The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

@@ -1,17 +1,17 @@
-#$Id: Cache.pm 46153 2007-10-19 00:26:07Z wsnyder $
+#$Id: Cache.pm 59180 2008-08-15 14:22:09Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2007 by Wilson Snyder.
+# This program is Copyright 2002-2008 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
 # Perl Artistic License.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#                                                                           
+#
 ######################################################################
 
 package Make::Cache;
@@ -34,7 +34,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.043';
+our $VERSION = '1.044';
 
 ######################################################################
 #### Creators
@@ -243,36 +243,49 @@ sub write {
 ########################################################################
 ## Digest reading
 
+use vars qw($_Test_Remove_Target); # Testing only!
+
 sub restore {
     my $self = shift or return;
     # Call this with the results of a find_hit
     # Restores the cached files.
+    # Returns self if ok, else undef
 
     my $pathfile = $self->{hit_filename} or die "%Error: Not called on a hit object,";
 
     # Update the digest date, so cleaning won't consider it unsed
     touch("${pathfile}.digest");
 
-    my $missing;
+    my $failed;
     for (my $n=0; $n<=$#{$self->{tgts_lcl}}; $n++) {
 	my $tgt = $self->{tgts_lcl}[$n];
 	my $from = "$pathfile.t${n}";
-	if (!-r $from) { $missing=$from; last; }
-	# Can't hard link, as might be on different file system
 	unlink $tgt;
+	if (!-r $from) {
+	    warn "objcache: -Info: Ignoring Cache: Cache files missing for $from\n";
+	    $failed=1; last;
+	}
+	# Can't hard link, as might be on different file system
+	unlink($from) if $_Test_Remove_Target;
+
 	if ($self->{link}) {
 	    print "    ln -s $from $tgt\n" if $Debug;
-	    symlink $from, $tgt or die "objcache: %Error: Can't ln -s $from $tgt: $!\n";
+	    if (!symlink $from, $tgt) {
+		warn "objcache: -Info: Ignoring cache: Can't ln -s $from $tgt: $!\n";
+		$failed=1; last;
+	    }
 	} else {
 	    print "    cp $from $tgt\n" if $Debug;
-	    copy $from, $tgt or die "objcache: %Error: Can't cp $from $tgt: $!\n";
+	    if (!copy $from, $tgt) {
+		warn "objcache: -Info: Ignoring cache: Can't cp $from $tgt: $!\n";
+		$failed=1; last;
+	    }
 	}
 	touch($tgt);
     }
 
-    if ($missing) {
+    if ($failed) {
 	# Recover nicely by blowing away the cache entry
-	warn "-Info: Cache.pm: Object cache files missing for $missing\n";
 	unlink ("$pathfile.digest");
 	for (my $n=0; $n<=$#{$self->{tgts_lcl}}; $n++) {
 	    my $from = "$pathfile.t${n}";
@@ -301,7 +314,7 @@ sub find_hit {
 	}
     }
     else {
-	print "Digests_read_dir $pathtgt\n" if $Debug;    
+	print "Digests_read_dir $pathtgt\n" if $Debug;
 	my $dir = new IO::Dir $pathtgt or return undef;
 	while (defined(my $basefile = $dir->read)) {
 	    my $file = "$pathtgt/$basefile";
@@ -466,7 +479,7 @@ sub _dump_recurse {
 	}
 	elsif ($file =~ /\.digest$/) {
 	    my $persistref = Storable::retrieve($file);
-	    print "$file\n" if $Debug; 
+	    print "$file\n" if $Debug;
 	    if ($infor->{dumpone}) {
 		#print Dumper($persistref);
 		$infor->{dumpone} = 0;
@@ -668,15 +681,15 @@ Write the cache digest.
 =item restore (object_from_find_hit)
 
 Given a object returned from find_hit, restore any target files to the
-local compile area.
+local compile area.  Return $self if successful, else undef.
 
 =back
 
 =head1 DISTRIBUTION
 
-The latest version is available from CPAN and from L<http://www.veripool.com/>.
+The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

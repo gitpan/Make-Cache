@@ -1,31 +1,35 @@
 Revision history for Perl extension Make::Cache
 
 The contributors that suggested a given feature are shown in [].
-	
-* Make::Cache 1.043 10/18/2007
+
+* Make::Cache 1.044 2008/08/15
+
+****	If errors occur during caching or restore, fall back to not use cache.
+
+* Make::Cache 1.043 2007/10/18
 
 ****	Fix --help to use Pod::Usage instead of depreciated pod2text.
 
 ****	Fix test failure when icecream not installed. [cpan-testers]
 
-* Make::Cache 1.042 2/1/2007
+* Make::Cache 1.042 2007/2/1
 
 ****	Fix Storable error when another process creates runtime
 	file simultaneously with our reading it. [Oleg Petlin]
 
-* Make::Cache 1.041 7/27/2006
+* Make::Cache 1.041 2006/7/27
 
 ***	With -gcc option, parse any compiler program as if GCC.
 
 ****	With -wrapper option, support purify, etc. in front of compiler name.
 
-* Make::Cache 1.040 2/21/2006
+* Make::Cache 1.040 2006/2/21
 
 **	By default, copy object files unless passed new --link flag.
 	This results in better performance when builds are on
 	local disks, and the global directory on network disks.
 
-* Make::Cache 1.030 7/27/2005
+* Make::Cache 1.030 2005/7/27
 
 ***	With --icecream, use icecream instead of logging in remotely.
 
@@ -33,25 +37,25 @@ The contributors that suggested a given feature are shown in [].
 
 ****	Support g++ -x option.
 
-* Make::Cache 1.020 5/23/2005
+* Make::Cache 1.020 2005/5/23
 
 ***	With --distcc, use distcc instead of logging in remotely.
 
-* Make::Cache 1.013 10/26/2004
+* Make::Cache 1.013 2004/10/26
 
 ***	Fix nice level under csh.
 
-* Make::Cache 1.012 2/12/2004
+* Make::Cache 1.012 2004/2/12
 
 ***	Fix warning when compiling in background. [Brad Cervenak]
 
 ****	Fixes for cpan-testers on sparc-solaris.
 
-* Make::Cache 1.011 2/11/2004
+* Make::Cache 1.011 2004/2/11
 
 ****	Fixes for cpan-testers on sparc-solaris.
 
-* Make::Cache 1.010 2/10/2004
+* Make::Cache 1.010 2004/2/10
 
 **	obj_cache renamed to objcache, and OBJ_CACHE_* environment
 	variables becomes OBJCACHE*. This makes the variable naming
@@ -60,18 +64,17 @@ The contributors that suggested a given feature are shown in [].
 
 ***	Added objcache --jobs, and OBJCACHE_JOBS documentation.
 
-* Make::Cache 1.000 1/28/2004
+* Make::Cache 1.000 2004/1/28
 
 **	First public release
 
 ----------------------------------------------------------------------
-$Id: Changes 46153 2007-10-19 00:26:07Z wsnyder $
 DESCRIPTION: Documentation on change history for this package
 ----------------------------------------------------------------------
 
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 
-Copyright 2003-2007 by Wilson Snyder.  This program is free software;
+Copyright 2003-2008 by Wilson Snyder.  This program is free software;
 you can redistribute it and/or modify it under the terms of either the GNU
 General Public License or the Perl Artistic License.
 

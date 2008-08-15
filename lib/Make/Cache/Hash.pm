@@ -1,17 +1,17 @@
-#$Id: Hash.pm 46153 2007-10-19 00:26:07Z wsnyder $
+#$Id: Hash.pm 59180 2008-08-15 14:22:09Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2007 by Wilson Snyder.
+# This program is Copyright 2002-2008 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
 # Perl Artistic License.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 ######################################################################
 
 package Make::Cache::Hash;
@@ -22,7 +22,7 @@ use Carp;
 use strict;
 use vars qw ($Debug);
 
-our $VERSION = '1.043';
+our $VERSION = '1.044';
 
 #######################################################################
 
@@ -39,7 +39,7 @@ sub dfile_read {
     $params{filename} or carp "Must specify filename=>,";
     my $fh = IO::File->new($params{filename}) or die "$0: %Error: $! depending $params{filename}\n";
     my $line = "";
-    
+
     my %all_deps;
     while (defined (my $thisline = $fh->getline())) {
 	chomp $thisline;
@@ -246,9 +246,9 @@ If any does not exist, return undef.
 
 =head1 DISTRIBUTION
 
-The latest version is available from CPAN and from L<http://www.veripool.com/>.
+The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

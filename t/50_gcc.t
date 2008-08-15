@@ -1,9 +1,8 @@
 #!/usr/bin/perl -w
-#$Id: 50_gcc.t 31185 2007-02-01 14:40:37Z wsnyder $
 ######################################################################
 # DESCRIPTION: Perl ExtUtils: Type 'make test' to test this package
 #
-# Copyright 2002-2007 by Wilson Snyder.  This program is free software;
+# Copyright 2002-2008 by Wilson Snyder.  This program is free software;
 # you can redistribute it and/or modify it under the terms of either the GNU
 # General Public License or the Perl Artistic License.
 ######################################################################
@@ -14,7 +13,7 @@ use File::Copy;
 use Cwd;
 use strict;
 
-BEGIN { plan tests => 22 }
+BEGIN { plan tests => 25 }
 BEGIN { require "t/test_utils.pl"; }
 
 use Make::Cache::Gcc;
@@ -83,9 +82,16 @@ for (my $i=0; $i<2; $i++) {
     $mc->preproc;
     my $hit = $mc->find_hit();
     ok($hit);
-    $hit->restore if $hit;
-
+    ok($hit && $hit->restore);
     ok(-r "test1.o");
+
+    if ($i==1) {
+	print "=========Try Test_Remove_Target\n";
+	warn "-Info: A warning on the next line is expected, we're testing that...\n";
+	my $hit = $mc->find_hit();
+	$Make::Cache::_Test_Remove_Target = 1;
+	ok($hit && !$hit->restore);
+    }
 }
 
 print "=========Cleanup\n";

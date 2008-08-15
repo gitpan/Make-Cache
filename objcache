@@ -1,18 +1,17 @@
 #!/usr/bin/perl -w
-#$Id: objcache 46153 2007-10-19 00:26:07Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2007 by Wilson Snyder.
+# This program is Copyright 2002-2008 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
 # Perl Artistic License.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#                                                                           
+#
 ######################################################################
 
 require 5.006_001;
@@ -34,7 +33,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.043';
+our $VERSION = '1.044';
 
 #======================================================================
 
@@ -73,6 +72,7 @@ Getopt::Long::config ("pass_through", "no_auto_abbrev");
 if (!GetOptions (
 		 "help"		=> \&usage,
 		 "debug"	=> \&debug,
+		 "version"	=> sub { print "Version $VERSION\n"; },
 		 "quiet!"	=> sub {shift; $Opt_Loud = !shift;},
 		 "clean!"	=> \$opt_clean,
 		 "distcc!"	=> \$opt_distcc,
@@ -158,9 +158,8 @@ my @tgts = $ochunt->tgts_lcl;
 $ochunt->preproc;
 my $ochit = $ochunt->find_hit if $Opt_Read;
 
-if ($ochit) {
+if ($ochit && $ochit->restore) {
     print "      Compiling $srcfile...  Object Cache Hit\n" if $Opt_Loud;
-    $ochit->restore;
     exit(0);
 } else {
     if ($Opt_Loud) {
@@ -199,7 +198,7 @@ if ($Debug && $Opt_Read && $Opt_Write) {
 #----------------------------------------------------------------------
 
 sub usage {
-    print '$Id: objcache 46153 2007-10-19 00:26:07Z wsnyder $ ', "\n";
+    print "Version $VERSION\n";
     pod2usage(-verbose=>2, -exitval => 2);
     exit (1);
 }
@@ -269,7 +268,7 @@ installed.  This uses the Schedule::Load package to determine what machines
 have free resources in the network.
 
   ifeq ($(SLCHOOSED_HOST),)
-   export OBJCACHE := 
+   export OBJCACHE :=
   else
    export OBJCACHE_HOSTS := $(shell rschedule --class class_gcc hostnames)
    export OBJCACHE_JOBS := -j $(shell objcache --jobs "$(OBJCACHE_HOSTS)")
@@ -297,11 +296,11 @@ Displays this message and program version and exits.
 
 =item --clean
 
-Remove any files older then one day from the cache.
+Remove any files older than one day from the cache.
 
 =item --distcc
 
-Use the distcc program to distribute compile jobs, rather then logging in
+Use the distcc program to distribute compile jobs, rather than logging in
 remotely and executing the compilation command.
 
 =item --gcc
@@ -320,7 +319,7 @@ that entry.
 
 =item --icecream
 
-Use the icecream program to distribute compile jobs, rather then logging in
+Use the icecream program to distribute compile jobs, rather than logging in
 remotely and executing the compilation command.
 
 =item --jobs
@@ -333,7 +332,7 @@ argument, use the argument instead of the OBJCACHE_HOSTS variable.
 =item --link
 
 When a object file hits, create a symlink to the master version, rather
-then copying.  This may result in better performance when there is a single
+than copying.  This may result in better performance when there is a single
 user, though worse performance when builds are local and the repository on
 a global disk.
 
@@ -351,6 +350,10 @@ Read the cache and use cached objects if they exist.
 
 Disable caching the execution time of the compile, nor show the runtime
 when compling.
+
+=item --version
+
+Displays program version and exits.
 
 =item --wrapper
 
@@ -389,6 +392,11 @@ compile needs to be run, objcache will pick a random host from this list,
 then remote shell to run the compile.  This allows a "make -j" run to use
 many machines in parallel.  Defaults to not remote shell.
 
+=item OBJCACHE_HOSTS_DETERMINANT
+
+Specifies a shell command to run which returns OBJCACHE_HOSTS.  This is not
+used by objcache itself, but by convention in higher level Makefiles.
+
 =item OBJCACHE_JOBS
 
 Specifies the forced return value for objcache --jobs.  If there is a
@@ -408,9 +416,9 @@ Specifies the program name to use for remote shells.  Defaults to rsh.
 
 =head1 DISTRIBUTION
 
-The latest version is available from CPAN and from L<http://www.veripool.com/>.
+The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

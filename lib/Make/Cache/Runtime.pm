@@ -1,17 +1,17 @@
-#$Id: Runtime.pm 46153 2007-10-19 00:26:07Z wsnyder $
+#$Id: Runtime.pm 59180 2008-08-15 14:22:09Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2007 by Wilson Snyder.
+# This program is Copyright 2002-2008 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
 # Perl Artistic License.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#                                                                           
+#
 ######################################################################
 
 require 5.006_001;
@@ -25,7 +25,7 @@ use Carp;
 
 use strict;
 
-our $VERSION = '1.043';
+our $VERSION = '1.044';
 
 #######################################################################
 
@@ -62,16 +62,23 @@ sub write {
     my $key_digest = Digest::MD5::md5_hex($params{key});
     (my $key_prefix = $key_digest) =~ s/^(..).*$/$1/;
     my $path = "$params{dir}/${key_prefix}";
-    # Ignore errors, as two processes may be doing this at once
-    # If the output dir isn't made the storable creation will catch it
-    eval { my_mkpath ($path); };
     my $filename = "$path/${key_digest}.runtime";
     print "Make::Cache::Runtime::write $filename\n" if $::Debug;
     my $newfile = "${filename}.new$$";
-    Storable::nstore ($params{persist}, $newfile);
-    chmod 0777, $newfile;
-    # Do the copy as one atomic op to prevent a race case with another reader
-    move ($newfile, "$filename");
+    # Ignore errors, as two processes may be doing this at once
+    # If the output dir isn't made the storable creation will catch it
+    # And if it fails, we'll live.
+    my $check = eval {
+	my_mkpath ($path);
+	Storable::nstore ($params{persist}, $newfile);
+	chmod 0777, $newfile;
+	# Do the copy as one atomic op to prevent a race case with another reader
+	move ($newfile, "$filename");
+	'ok';
+    };
+    if ($check ne 'ok') {
+	warn "-Info: Runtime stashing failed:".($@||"")."\n";
+    }
 }
 
 sub read {
@@ -134,12 +141,12 @@ sub my_mkpath {
     $paths = [$paths] unless ref $paths;
     my (@created,$path);
     foreach $path (@$paths) {
-	$path .= '/' if $^O eq 'os2' and $path =~ /^\w:\z/s; # feature of CRT 
+	$path .= '/' if $^O eq 'os2' and $path =~ /^\w:\z/s; # feature of CRT
 	next if -d $path;
 	my $parent = File::Basename::dirname($path);
 	unless (-d $parent or $path eq $parent) {
 	    push(@created,my_mkpath($parent, $verbose, $mode));
- 	}
+	}
 	print "mkdir $path\n" if $verbose;
 	unless (mkdir($path,$mode)) {
 	    my $e = $!;
@@ -228,9 +235,9 @@ Specifies the directory containing the runtime database.  Defaults to
 
 =head1 DISTRIBUTION
 
-The latest version is available from CPAN and from L<http://www.veripool.com/>.
+The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

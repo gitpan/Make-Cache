@@ -1,17 +1,17 @@
-#$Id: Obj.pm 46153 2007-10-19 00:26:07Z wsnyder $
+#$Id: Obj.pm 59180 2008-08-15 14:22:09Z wsnyder $
 ######################################################################
 #
-# This program is Copyright 2002-2007 by Wilson Snyder.
+# This program is Copyright 2002-2008 by Wilson Snyder.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of either the GNU General Public License or the
 # Perl Artistic License.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#                                                                           
+#
 ######################################################################
 
 package Make::Cache::Obj;
@@ -32,7 +32,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.043';
+our $VERSION = '1.044';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;
@@ -131,14 +131,14 @@ sub _preproc_hash {
     foreach my $cmd ($self->flags_gbl) {
 	$md5->add($cmd);
     }
-    
+
     # Hash the generated preprocess output
     my $wholefile;
     {
 	my $fh = IO::File->new($self->temp_filename)
 	    or die "objcache: %Error: Preprocessor failed: ".join(' ',$self->preproc_cmds)."\n";
 	local $/; undef $/;
-	$wholefile = <$fh>;	# Much faster then reading a line.
+	$wholefile = <$fh>;	# Much faster than reading a line.
 	$fh->close;
     }
 
@@ -428,8 +428,8 @@ $oc->parse_cmds;
 $oc->tgts_unlink;
 $oc->preproc;
 my $ochit = $oc->find_hit;
-if ($ochit) {
-    $ochit->restore;
+if ($ochit && $ochit->restore) {
+    # Restored it
 } else {
     # Run command passed
     $oc->execute;
@@ -479,7 +479,7 @@ Set the list of regexp references that are acceptable global includes.
 =item host
 
 Return the name of a remote host to run the compilation on, or 0 for the
-local host.  If the compile time is less then the min_remote_runtime
+local host.  If the compile time is less than the min_remote_runtime
 variable, the compile will always be done locally.  Else, the host is
 chosen randomly from elements in the remote_hosts list.
 
@@ -530,9 +530,9 @@ compile.
 
 =head1 DISTRIBUTION
 
-The latest version is available from CPAN and from L<http://www.veripool.com/>.
+The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2007 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 
