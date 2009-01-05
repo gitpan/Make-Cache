@@ -1,17 +1,5 @@
 #!/usr/bin/perl -w
-######################################################################
-#
-# This program is Copyright 2002-2008 by Wilson Snyder.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of either the GNU General Public License or the
-# Perl Artistic License.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
+# See copyright, etc in below POD section.
 ######################################################################
 
 require 5.006_001;
@@ -26,6 +14,7 @@ use IO::File;
 use IO::Pipe;
 use Pod::Usage;
 use File::Copy;
+use BSD::Resource;
 use POSIX qw(:sys_wait_h);
 
 use Make::Cache::Gcc;
@@ -33,7 +22,7 @@ use strict;
 
 our $Debug;
 
-our $VERSION = '1.044';
+our $VERSION = '1.050';
 
 #======================================================================
 
@@ -56,6 +45,7 @@ my @params = ();
 our $Opt_Loud = 1;
 our $Opt_Read = 0;
 my $opt_clean;
+our $opt_completed;
 our $opt_distcc;
 my $opt_dump;
 our $opt_dump_rm;
@@ -65,6 +55,7 @@ our $opt_link;
 our $opt_gcc;
 our $opt_wrapper;
 our $Opt_Write = 0;
+our $opt_vmemlimit;
 our @Opt_Okdir;
 
 # Before reading standards, collect help & debug flags
@@ -72,9 +63,10 @@ Getopt::Long::config ("pass_through", "no_auto_abbrev");
 if (!GetOptions (
 		 "help"		=> \&usage,
 		 "debug"	=> \&debug,
-		 "version"	=> sub { print "Version $VERSION\n"; },
+		 "version"	=> sub { print "Version $VERSION\n"; exit(0); },
 		 "quiet!"	=> sub {shift; $Opt_Loud = !shift;},
 		 "clean!"	=> \$opt_clean,
+		 "completed=i"	=> \$opt_completed,
 		 "distcc!"	=> \$opt_distcc,
 		 "dump!"	=> \$opt_dump,
 		 "dumprm!"	=> \$opt_dump_rm,
@@ -84,9 +76,10 @@ if (!GetOptions (
 		 "jobs:s"	=> \$opt_jobs,
 		 "okdir=s"	=> sub {shift; push @Opt_Okdir, shift;},
 		 "read!"	=> \$Opt_Read,
+	 	 "vmemlimit=f"	=> \$opt_vmemlimit,
 		 "wrapper!"	=> \$opt_wrapper,
 		 "write!"	=> \$Opt_Write,
-		 # Program and it's parameters
+		 # Program and its parameters
 		 "<>"		=> \&parameter,
 		 )) {
     die "%Error: Bad usage, try 'objcache --help'\n";
@@ -96,6 +89,15 @@ push @params, @ARGV;
 print "OBJCACHE R$Opt_Read W$Opt_Write: ",join(',',@params),"\n" if $Debug;
 
 $opt_dump = 1 if $opt_dump_rm;
+
+if ($opt_vmemlimit) {
+    my $limitbytes = $opt_vmemlimit*1024*1024*1024;
+    my ($nowsoft, $nowhard) = BSD::Resource::getrlimit(RLIMIT_VMEM); # In bytes
+    $limitbytes = $nowsoft if ($nowsoft && $nowsoft<$limitbytes && $nowsoft != RLIM_INFINITY);
+    $limitbytes = $nowhard if ($nowhard && $nowhard<$limitbytes && $nowhard != RLIM_INFINITY);
+    BSD::Resource::setrlimit(RLIMIT_VMEM, $limitbytes,$nowhard) # In bytes
+	or die "objcache: %Error: --vmemlimit not accepted by OS setrlimit call, perhaps too high?\n";
+}
 
 if (defined $opt_jobs) {
     my @hosts = (split(/[ :]/,$opt_jobs||$ENV{OBJCACHE_HOSTS}||""));
@@ -184,7 +186,14 @@ if ($Opt_Write) {
 } else {
     $ochunt->runtime_write;
 }
-#print "      Compiling $srcfile took ".Make::Cache::Runtime::format_time($ochunt->runtime)."\n" if $Opt_Loud;
+
+if ($opt_completed && $ochunt->runtime >= $opt_completed) {
+    my $msg = "      Compiling $srcfile...";
+    $msg .= "  Completed in ".Make::Cache::Runtime::format_time($ochunt->runtime);
+    $msg .= " (on ".$ochunt->host.")" if $ochunt->host;
+    $msg .= "\n";
+    print $msg;
+}
 
 if ($Debug && $Opt_Read && $Opt_Write) {
     $ochunt->clear_hash_cache;
@@ -298,6 +307,11 @@ Displays this message and program version and exits.
 
 Remove any files older than one day from the cache.
 
+=item --completed <seconds>
+
+Print a completion message when a compile completes if the compile took
+more than the specified number of seconds.
+
 =item --distcc
 
 Use the distcc program to distribute compile jobs, rather than logging in
@@ -354,6 +368,12 @@ when compling.
 =item --version
 
 Displays program version and exits.
+
+=item --vmemlimit <gbytes>
+
+Limit the GCC process to the specified number of gigabytes of memory space.
+Note this will only apply to local compiles, not those sent across distcc
+or icecream.
 
 =item --wrapper
 
@@ -418,7 +438,7 @@ Specifies the program name to use for remote shells.  Defaults to rsh.
 
 The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2009 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

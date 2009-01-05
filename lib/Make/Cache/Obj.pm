@@ -1,17 +1,4 @@
-#$Id: Obj.pm 59180 2008-08-15 14:22:09Z wsnyder $
-######################################################################
-#
-# This program is Copyright 2002-2008 by Wilson Snyder.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of either the GNU General Public License or the
-# Perl Artistic License.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
+# See copyright, etc in below POD section.
 ######################################################################
 
 package Make::Cache::Obj;
@@ -32,7 +19,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache);
 *Debug = \$Make::Cache::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.044';
+our $VERSION = '1.050';
 
 our $Cc_Running_Lock;
 our $Temp_Filename;
@@ -211,8 +198,7 @@ sub execute {
 
     if ($host) {
 	if ($self->distcc) {
-	    $ENV{DISTCC_HOSTS}   ||= join(' ',@{$self->{remote_hosts}});
-	    $ENV{DISTCC_SSH}     ||= ($ENV{OBJCACHE_RSH}||'rsh');
+	    $ENV{DISTCC_HOSTS}   ||= join(' ',$self->_shuffle_list(@{$self->{remote_hosts}}));
 	    $ENV{DISTCC_VERBOSE} ||= 1 if $Debug;
 	    unshift @params, ('distcc',);
 	}
@@ -227,7 +213,7 @@ sub execute {
 	    # -n gets around blocking waiting for stdin when 'make' is in the background
 	    # FIX: Note this will break if we ever objcache some make target that requires stdin!
 	    my $nice = (-f "/bin/nice") ? "/bin/nice" : "/usr/bin/nice";
-	    unshift @params, (split(' ',$ENV{OBJCACHE_RSH}||'rsh'),
+	    unshift @params, (split(' ',$ENV{OBJCACHE_RSH}||$ENV{DIRPROJECT_SSH}||'rsh'),
 			      '-n', $host, 'cd', Cwd::getcwd(), '&&', $nice, '-9',);
 	}
     }
@@ -411,6 +397,17 @@ sub host {
     return $self->{host};
 }
 
+sub _shuffle_list {
+    my $self = shift;
+    my @in = @_;
+    my $i = @in;
+    while ($i--) {
+	my $j = int rand ($i+1);
+	@in[$i,$j] = @in[$j,$i];
+    }
+    return @in;
+}
+
 ######################################################################
 1;
 __END__
@@ -532,7 +529,7 @@ compile.
 
 The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2009 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 

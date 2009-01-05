@@ -1,10 +1,11 @@
 # http://module-build.sourceforge.net/META-spec.html
 name:         Make-Cache
-version:      1.044
+version:      1.050
 version_from: Cache.pm
 license:      perl
 installdirs:  site
 requires:
+    BSD::Resource:                 1
     Digest::MD5:                   1
     Pod::Usage:                    0
     Storable:                      1

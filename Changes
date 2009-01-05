@@ -2,6 +2,14 @@ Revision history for Perl extension Make::Cache
 
 The contributors that suggested a given feature are shown in [].
 
+* Make::Cache 1.050 2009/01/05
+
+***	Add objcache --completed option to print compile times.
+
+***	Add objcache --vmemlimit option to prevent gcc virtual memory paging.
+
+***	With distcc, shuffle the host list for more even utilization.
+
 * Make::Cache 1.044 2008/08/15
 
 ****	If errors occur during caching or restore, fall back to not use cache.
@@ -74,7 +82,7 @@ DESCRIPTION: Documentation on change history for this package
 
 This uses outline mode in Emacs.  See C-h m [M-x describe-mode].
 
-Copyright 2003-2008 by Wilson Snyder.  This program is free software;
+Copyright 2003-2009 by Wilson Snyder.  This program is free software;
 you can redistribute it and/or modify it under the terms of either the GNU
 General Public License or the Perl Artistic License.
 

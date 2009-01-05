@@ -1,6 +1,6 @@
 # DESCRIPTION: Perl ExtUtils: Type 'perl Makefile.PL' to create a Makefile for this package
 #
-# Copyright 2001-2008 by Wilson Snyder.  This program is free software;
+# Copyright 2001-2009 by Wilson Snyder.  This program is free software;
 # you can redistribute it and/or modify it under the terms of either the GNU
 # General Public License or the Perl Artistic License.
 
@@ -9,33 +9,33 @@ use ExtUtils::MakeMaker;
 use Carp;
 
 sub MY::postamble {
-"
+    q{
 README: readme.texi
-	-rm -rf \$@
-	makeinfo \$< --output \$@ --no-headers --no-validate
+	-$(RM_RF) $@
+	makeinfo $< --output $@ --no-headers --no-validate
 
 dist: distcheck README
 
 ## Maintainer use:
 preexist:
-	svnorcvs nexists \$(DISTNAME)_\$(VERSION_SYM)
+	svnorcvs nexists $(DISTNAME)_$(VERSION_SYM)
 	test -s README
 
 tag:
-	svnorcvs tag  \$(DISTNAME)_\$(VERSION_SYM)
+	svnorcvs tag  $(DISTNAME)_$(VERSION_SYM)
 
 maintainer-diff:
-	svnorcvs diff \$(DISTNAME)_\$(VERSION_SYM)
+	svnorcvs diff $(DISTNAME)_$(VERSION_SYM)
 
 maintainer-dist: preexist dist tag
-	svnorcvs release \$(DISTVNAME).tar.gz
+	svnorcvs release $(DISTVNAME).tar.gz
 
 maintainer-clean: distclean
-	-rm -rf README Makefile
+	-$(RM_RF) README Makefile
 
 clean::
-	-rm -rf test_dir
-";
+	-$(RM_RF) test_dir
+};
 }
 
 WriteMakefile(
@@ -44,7 +44,8 @@ WriteMakefile(
 	      ABSTRACT  => 'Caching of GCC objects and Make targets',
 	      VERSION_FROM  => 'lib/Make/Cache.pm',
 	      NO_META	=> 1,
-	      PREREQ_PM => {'Digest::MD5' => 1,
+	      PREREQ_PM => {'BSD::Resource' => 1,
+			    'Digest::MD5' => 1,
 			    'Pod::Usage' => 0,
 			    'Storable' => 1,
 			},

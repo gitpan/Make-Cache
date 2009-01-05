@@ -1,17 +1,4 @@
-#$Id: Hash.pm 59180 2008-08-15 14:22:09Z wsnyder $
-######################################################################
-#
-# This program is Copyright 2002-2008 by Wilson Snyder.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of either the GNU General Public License or the
-# Perl Artistic License.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
+# See copyright, etc in below POD section.
 ######################################################################
 
 package Make::Cache::Hash;
@@ -22,7 +9,7 @@ use Carp;
 use strict;
 use vars qw ($Debug);
 
-our $VERSION = '1.044';
+our $VERSION = '1.050';
 
 #######################################################################
 
@@ -248,7 +235,7 @@ If any does not exist, return undef.
 
 The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
-Copyright 2000-2008 by Wilson Snyder.  This package is free software; you
+Copyright 2000-2009 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
 Lesser General Public License or the Perl Artistic License.
 
