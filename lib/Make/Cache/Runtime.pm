@@ -12,18 +12,18 @@ use Carp;
 
 use strict;
 
-our $VERSION = '1.050';
+our $VERSION = '1.051';
 
 #######################################################################
 
-our $Cache_Dir = undef;   # Set/accessed with cache_dir function
+our $_Cache_Dir = undef;   # Set/accessed with cache_dir function
 
 #######################################################################
 
 sub cache_dir {
-    $Cache_Dir ||= $ENV{OBJCACHE_RUNTIME_DIR} || "/usr/local/common/lib/runtime";
-    $Cache_Dir = shift if $_[0];
-    return $Cache_Dir;
+    $_Cache_Dir ||= $ENV{OBJCACHE_RUNTIME_DIR} || "/usr/local/common/lib/runtime";
+    $_Cache_Dir = shift if $_[0];
+    return $_Cache_Dir;
 }
 
 sub format_time {
@@ -226,7 +226,8 @@ The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
 Copyright 2000-2009 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
-Lesser General Public License or the Perl Artistic License.
+Lesser General Public License Version 3 or the Perl Artistic License
+Version 2.0.
 
 =head1 AUTHORS
 

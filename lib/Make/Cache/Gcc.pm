@@ -12,7 +12,7 @@ use vars qw(@ISA $Debug);
 @ISA=qw(Make::Cache::Obj);
 *Debug = \$Make::Cache::Obj::Debug;  	# "Import" $Debug
 
-our $VERSION = '1.050';
+our $VERSION = '1.051';
 
 #######################################################################
 ## Methods that superclasses are likely to override
@@ -211,7 +211,8 @@ The latest version is available from CPAN and from L<http://www.veripool.org/>.
 
 Copyright 2000-2009 by Wilson Snyder.  This package is free software; you
 can redistribute it and/or modify it under the terms of either the GNU
-Lesser General Public License or the Perl Artistic License.
+Lesser General Public License Version 3 or the Perl Artistic License
+Version 2.0.
 
 =head1 AUTHORS
 
