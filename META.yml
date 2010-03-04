@@ -1,14 +1,22 @@
-# http://module-build.sourceforge.net/META-spec.html
+--- #YAML:1.0
 name:         Make-Cache
-version:      1.051
+version:      1.052
 version_from: Cache.pm
+abstract:     Caching of GCC objects and Make targets
 license:      perl
 installdirs:  site
+author:
+    - Wilson Snyder <wsnyder@wsnyder.org>
+resources:
+    homepage: http://www.veripool.org
 requires:
     BSD::Resource:                 1
     Digest::MD5:                   1
-    Pod::Usage:                    0
+    Pod::Usage:                    1.34
     Storable:                      1
 
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.4.html
+    version: 1.4
 distribution_type: module
 generated_by: Hand

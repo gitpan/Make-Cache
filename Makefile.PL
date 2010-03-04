@@ -1,6 +1,6 @@
 # DESCRIPTION: Perl ExtUtils: Type 'perl Makefile.PL' to create a Makefile for this package
 #
-# Copyright 2001-2009 by Wilson Snyder.  This program is free software;
+# Copyright 2001-2010 by Wilson Snyder.  This program is free software;
 # you can redistribute it and/or modify it under the terms of either the GNU
 # General Public License Version 3 or the Perl Artistic License Version 2.0.
 
@@ -46,7 +46,7 @@ WriteMakefile(
 	      NO_META	=> 1,
 	      PREREQ_PM => {'BSD::Resource' => 1,
 			    'Digest::MD5' => 1,
-			    'Pod::Usage' => 0,
+			    'Pod::Usage' => 1.34,
 			    'Storable' => 1,
 			},
 	      EXE_FILES => [qw( objcache )],
